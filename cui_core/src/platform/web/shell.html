@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>cui</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #111318;
+    overflow: hidden;
+  }
+  /* The canvas fills the viewport; cui_core sizes the backing store to the CSS box,
+     so layout units are CSS pixels and the browser upscales on HiDPI. */
+  #canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    outline: none;
+    touch-action: none;
+    cursor: default;
+  }
+  #status {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9aa4b2;
+    font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  #status.hidden { opacity: 0; }
+</style>
+</head>
+<body>
+<canvas id="canvas" tabindex="0"></canvas>
+<div id="status">加载中…</div>
+<script>
+  var Module = {
+    canvas: document.getElementById('canvas'),
+    print: function (text) { console.log(text); },
+    printErr: function (text) { console.error(text); },
+    setStatus: function (text) {
+      var el = document.getElementById('status');
+      if (text) {
+        el.textContent = text;
+        el.classList.remove('hidden');
+      } else {
+        el.classList.add('hidden');
+      }
+    },
+    onRuntimeInitialized: function () {
+      Module.setStatus('');
+      // Deferred: WebWindow::create() (inside main) registers the resize
+      // callback, so the event must not be dispatched before that.
+      setTimeout(function () {
+        window.dispatchEvent(new Event('resize'));
+        Module.canvas.focus();
+      }, 0);
+    }
+  };
+</script>
+{{{ SCRIPT }}}
+</body>
+</html>

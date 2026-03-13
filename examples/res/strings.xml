@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- CUI Gallery — English string resources (Android-style) -->
+<resources>
+    <!-- Window title -->
+    <string name="AppTitle">CUI — Widget Gallery</string>
+
+    <!-- Ribbon -->
+    <string name="Home">Home</string>
+    <string name="Theme">Theme</string>
+    <string name="Light">Light</string>
+    <string name="Dark">Dark</string>
+    <string name="Ocean">Ocean</string>
+    <string name="Forest">Forest</string>
+    <string name="Sky Blue">Sky Blue</string>
+    <string name="Orange">Orange</string>
+    <string name="Lavender">Lavender</string>
+    <string name="Language">Language</string>
+    <string name="Switch Language">Switch Language</string>
+
+    <!-- Tab titles -->
+    <string name="Basic Controls">Basic Controls</string>
+    <string name="Data Display">Data Display</string>
+    <string name="Layout System">Layout System</string>
+    <string name="Navigation">Navigation</string>
+    <string name="Feedback">Feedback</string>
+    <string name="Advanced">Advanced</string>
+
+    <!-- Section headers -->
+    <string name="Buttons">Buttons</string>
+    <string name="Toggles">Toggles</string>
+    <string name="Value Input">Value Input</string>
+    <string name="Text Input">Text Input</string>
+    <string name="Cards &amp; Containers">Cards &amp; Containers</string>
+    <string name="Badges &amp; Avatars">Badges &amp; Avatars</string>
+    <string name="Chips &amp; Tags">Chips &amp; Tags</string>
+    <string name="Lists &amp; Grids">Lists &amp; Grids</string>
+    <string name="Tree">Tree</string>
+    <string name="Row &amp; Column">Row &amp; Column</string>
+    <string name="Expanded / Flexible">Expanded / Flexible</string>
+    <string name="Wrap Layout">Wrap Layout</string>
+    <string name="Stack Layout">Stack Layout</string>
+    <string name="Align / SizedBox / Spacer">Align / SizedBox / Spacer</string>
+    <string name="Tab Widget">Tab Widget</string>
+    <string name="Stepper">Stepper</string>
+    <string name="Expansion Tiles">Expansion Tiles</string>
+    <string name="Navigation Rail">Navigation Rail</string>
+    <string name="Page View">Page View</string>
+    <string name="Drawer &amp; BottomSheet">Drawer &amp; BottomSheet</string>
+    <string name="Search">Search</string>
+    <string name="Rating">Rating</string>
+    <string name="Color">Color</string>
+    <string name="Time">Time</string>
+    <string name="Date">Date</string>
+    <string name="Notifications">Notifications</string>
+    <string name="Ink Well">Ink Well</string>
+    <string name="Popup Menu">Popup Menu</string>
+    <string name="Animated">Animated</string>
+    <string name="Images">Images</string>
+    <string name="Scroll Area">Scroll Area</string>
+
+    <!-- Button labels -->
+    <string name="Default">Default</string>
+    <string name="Primary">Primary</string>
+    <string name="Danger">Danger</string>
+    <string name="Disabled">Disabled</string>
+    <string name="Hover me for Tooltip">Hover me for Tooltip</string>
+    <string name="Open Bottom Sheet">Open Bottom Sheet</string>
+
+    <!-- Toggle / Radio labels -->
+    <string name="Option A">Option A</string>
+    <string name="Option B">Option B</string>
+    <string name="Wi-Fi">Wi-Fi</string>
+    <string name="Bluetooth">Bluetooth</string>
+    <string name="Small">Small</string>
+    <string name="Medium">Medium</string>
+    <string name="Large">Large</string>
+
+    <!-- Input placeholders / values -->
+    <string name=" px"> px</string>
+    <string name="Apple">Apple</string>
+    <string name="Banana">Banana</string>
+    <string name="Cherry">Cherry</string>
+    <string name="Durian">Durian</string>
+    <string name="Enter your name...">Enter your name...</string>
+    <string name="Read-only field">Read-only field</string>
+    <string name="Multi-line text input...">Multi-line text input...</string>
+    <string name="Hello CUI!\nThis is a multi-line text editor.">Hello CUI!\nThis is a multi-line text editor.</string>
+    <string name="Search widgets...">Search widgets...</string>
+
+    <!-- Card / Badge / Chip -->
+    <string name="Card Title">Card Title</string>
+    <string name="This is a card with elevation.">This is a card with elevation.</string>
+    <string name="High Elevation">High Elevation</string>
+    <string name="Shadow depth = 6">Shadow depth = 6</string>
+    <string name="Selected">Selected</string>
+    <string name="Filter">Filter</string>
+    <string name="Action">Action</string>
+    <string name="Input">Input</string>
+
+    <!-- Descriptions -->
+    <string name="Row: horizontal arrangement with spacing">Row: horizontal arrangement with spacing</string>
+    <string name="Expanded children fill space proportionally (1:2:1)">Expanded children fill space proportionally (1:2:1)</string>
+    <string name="Wrap: children flow and wrap to next line">Wrap: children flow and wrap to next line</string>
+    <string name="Centered Overlay Text">Centered Overlay Text</string>
+    <string name="Stack: children layered on top of each other">Stack: children layered on top of each other</string>
+    <string name="Aligned Right">Aligned Right</string>
+    <string name="Left">Left</string>
+    <string name="Right">Right</string>
+    <string name="Spacer pushes children to opposite ends">Spacer pushes children to opposite ends</string>
+    <string name="Flex=1">Flex=1</string>
+    <string name="Flex=2">Flex=2</string>
+
+    <!-- List / Tree / Virtual -->
+    <string name="Log entry #">Log entry #</string>
+    <string name="  ·  generated on demand, never stored">  ·  generated on demand, never stored</string>
+    <string name="List item #">List item #</string>
+    <string name="Scroll item #">Scroll item #</string>
+    <string name="Virtual list — 1,000,000 rows via lazy ListModel (O(visible) per frame, wheel/scrollbar/keys/double-click)">Virtual list — 1,000,000 rows via lazy ListModel (O(visible) per frame, wheel/scrollbar/keys/double-click)</string>
+    <string name="Tree — expand/collapse, selection, hover, wheel/scrollbar/keys">Tree — expand/collapse, selection, hover, wheel/scrollbar/keys</string>
+
+    <!-- Navigation content -->
+    <string name="Page 1 content">Page 1 content</string>
+    <string name="This is the first tab page.">This is the first tab page.</string>
+    <string name="Page 2 content">Page 2 content</string>
+    <string name="This is the second tab page.">This is the second tab page.</string>
+    <string name="Page 3 content">Page 3 content</string>
+    <string name="This is the third tab page.">This is the third tab page.</string>
+    <string name="Tab A">Tab A</string>
+    <string name="Tab B">Tab B</string>
+    <string name="Tab C">Tab C</string>
+    <string name="Account">Account</string>
+    <string name="Create your account">Create your account</string>
+    <string name="Profile">Profile</string>
+    <string name="Set up your profile">Set up your profile</string>
+    <string name="Finish">Finish</string>
+    <string name="Review and submit">Review and submit</string>
+    <string name="Section 1 — Details">Section 1 — Details</string>
+    <string name="Expanded body content goes here.">Expanded body content goes here.</string>
+    <string name="You can put any widget inside.">You can put any widget inside.</string>
+    <string name="Section 2 — More Info">Section 2 — More Info</string>
+    <string name="Click the header to expand/collapse.">Click the header to expand/collapse.</string>
+    <string name="Favorites">Favorites</string>
+    <string name="Settings">Settings</string>
+    <string name="Swipe Page ">Swipe Page </string>
+    <string name="Drag left/right to swipe between pages (auto-play 3s)">Drag left/right to swipe between pages (auto-play 3s)</string>
+    <string name="Drawer slides in from the left edge.">Drawer slides in from the left edge.</string>
+    <string name="BottomSheet slides up from the bottom.">BottomSheet slides up from the bottom.</string>
+    <string name="Bottom Sheet Content">Bottom Sheet Content</string>
+    <string name="This is a modal bottom sheet.">This is a modal bottom sheet.</string>
+    <string name="Drag down or tap outside to close.">Drag down or tap outside to close.</string>
+    <string name="Tap the button above to show the bottom sheet">Tap the button above to show the bottom sheet</string>
+
+    <!-- Feedback content -->
+    <string name="Top: interactive. Bottom: read-only (4 stars)">Top: interactive. Bottom: read-only (4 stars)</string>
+    <string name="File saved successfully.">File saved successfully.</string>
+    <string name="UNDO">UNDO</string>
+    <string name="Your session will expire in 5 minutes.">Your session will expire in 5 minutes.</string>
+
+    <!-- Advanced content -->
+    <string name="This is a helpful tooltip!">This is a helpful tooltip!</string>
+    <string name="PopupMenu appears at a position with items.">PopupMenu appears at a position with items.</string>
+    <string name="New File">New File</string>
+    <string name="Open File">Open File</string>
+    <string name="Save">Save</string>
+    <string name="Exit">Exit</string>
+    <string name="Click me for ripple effect">Click me for ripple effect</string>
+    <string name="Hover and press to see visual feedback">Hover and press to see visual feedback</string>
+    <string name="Pulsing Opacity Animation">Pulsing Opacity Animation</string>
+    <string name="Opacity oscillates 0.3 ↔ 1.0 every 1.5s">Opacity oscillates 0.3 ↔ 1.0 every 1.5s</string>
+    <string name="Scale Breathing Animation">Scale Breathing Animation</string>
+    <string name="Scale oscillates 0.92 ↔ 1.08 every 1.2s">Scale oscillates 0.92 ↔ 1.08 every 1.2s</string>
+    <string name="Square">Square</string>
+    <string name="Rounded">Rounded</string>
+    <string name="Circle">Circle</string>
+
+    <!-- Colors -->
+    <string name="Red">Red</string>
+    <string name="Blue">Blue</string>
+    <string name="Green">Green</string>
+    <string name="Yellow">Yellow</string>
+    <string name="Purple">Purple</string>
+    <string name="Cyan">Cyan</string>
+    <string name="Magenta">Magenta</string>
+    <string name="Teal">Teal</string>
+    <string name="Lime">Lime</string>
+</resources>

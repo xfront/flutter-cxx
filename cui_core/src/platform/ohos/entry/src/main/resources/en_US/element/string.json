@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "cui gallery module"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "cui gallery host ability"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "cui Gallery"
+    }
+  ]
+}

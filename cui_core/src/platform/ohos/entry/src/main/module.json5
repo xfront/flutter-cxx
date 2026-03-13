@@ -1,0 +1,57 @@
+{
+  "module": {
+    "name": "entry",
+    "type": "entry",
+    "description": "$string:module_desc",
+    "mainElement": "EntryAbility",
+    "deviceTypes": [
+      "phone",
+      "tablet",
+      "2in1"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "abilities": [
+      {
+        "name": "EntryAbility",
+        "srcEntry": "./ets/entryability/EntryAbility.ets",
+        "description": "$string:EntryAbility_desc",
+        "icon": "$media:layered_image",
+        "label": "$string:EntryAbility_label",
+        "startWindowIcon": "$media:startIcon",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true,
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "action.system.home"
+            ]
+          }
+        ]
+      }
+    ],
+    // 权限口径与 Android 的 AndroidManifest.xml 一致：**默认不申请任何敏感权限**。
+    // 这里只留 system_grant 的 INTERNET（平台服务/视频拉流用，装上即生效、无弹窗）。
+    //
+    // 下面这些是**按需**声明（敏感权限，需要用户弹窗授权，加了就等于对外承诺会用到）：
+    //   "ohos.permission.CAMERA"                ← ets/cui_core/CuiCameraService.ets
+    //     （import camera from '@ohos.multimedia.camera'，cui_core/camera 通道）
+    //   "ohos.permission.MICROPHONE"            ← 同上，录像带音频时
+    //   "ohos.permission.ACCESS_BLUETOOTH"      ← ets/cui_core/CuiBluetoothService.ets
+    //     （import ble from '@ohos.bluetooth.ble'，cui_core/bluetooth 通道）
+    //   "ohos.permission.READ_PASTEBOARD"       ← CuiPlatformServices 的剪贴板 get
+    //   "ohos.permission.APPROXIMATELY_LOCATION" / "READ_IMAGEVIDEO" / "READ_CONTACTS"
+    // 这些服务在 ArkTS 侧是**可选能力**（通道没被调用就完全不会触发权限检查），
+    // 而 gallery 首页用不到，所以骨架阶段一律不加；真要用的时候由使用方连权限带
+    // CuiPlatformServices 里的 check/request 流程一起打开。
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.INTERNET"
+      }
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+# Rust build artifacts
+/target
+**/target/
+debug/
+release/
+*build*/
+vcpkg*/
+# CMake 统一产物目录（库 / 可执行文件 / 第三方运行时 .so）
+/dist/
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Documentation
+ice-docs/
+
+# Benchmark data
+*.bench
+
+# Coverage
+*.gcda
+*.gcno
+coverage/
+
+# Cargo lock (optional - uncomment if you want to ignore it)
+# Cargo.lock
+/third_party/
+.vcpkg/
+.local/
+.*
+!.gitattributes

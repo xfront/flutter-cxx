@@ -1,0 +1,52 @@
+{
+  "name": "cui",
+  "version-string": "0.1.0",
+  "description": "Cross-platform reactive GUI framework with C++20 coroutines + MVI + Skia",
+  "homepage": "",
+  "license": "MIT",
+  "features": {
+    "ffmpeg": {
+      "description": "第二条解码路线（packages/video 的 FFmpeg 端）：由 vcpkg 按当前 triplet 自动下载并现编，全平台都只用这一份（不碰发行版的 libav*）。开关是 CMake 的 CUI_VIDEO_FFMPEG_VCPKG（默认 ON）与 CUI_VIDEO_FFMPEG（默认 ON），根 CMakeLists 在 project() 之前把本 feature 追加到 VCPKG_MANIFEST_FEATURES。",
+      "dependencies": [
+        {
+          "name": "ffmpeg",
+          "default-features": false,
+          "features": ["avcodec", "avformat", "swresample", "swscale"],
+          "platform": "!emscripten"
+        }
+      ]
+    }
+  },
+  "dependencies": [
+    {
+      "name": "skia",
+      "features": ["vulkan", "graphite"],
+      "platform": "!osx & !ios & !emscripten & !ohos"
+    },
+    {
+      "name": "skia",
+      "platform": "emscripten",
+      "default-features": false,
+      "features": ["freetype", "harfbuzz", "icu", "jpeg", "png", "webp"]
+    },
+    {
+      "name": "skia",
+      "platform": "ohos",
+      "default-features": false,
+      "features": ["freetype", "harfbuzz", "icu", "jpeg", "png", "webp"]
+    },
+    {
+      "name": "skia",
+      "features": ["metal", "graphite"],
+      "platform": "osx | ios"
+    },
+    {
+      "name": "libxcb",
+      "platform": "linux"
+    },
+    {
+      "name": "fontconfig",
+      "platform": "linux"
+    }
+  ]
+}

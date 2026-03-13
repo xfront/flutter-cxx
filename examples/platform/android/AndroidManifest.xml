@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  cui gallery 的 Android 宿主。
+
+  入口是 dev.cui.framework.CuiActivity（framework 里的 NativeActivity 子类），
+  `android.app.lib_name` 指向 libcui_gallery.so —— NativeActivity 会在
+  onCreate 里加载它，然后由 android_native_app_glue 调用 android_main()
+  （见 flutter/src/platform/android/cpp/main.cpp）。
+
+  权限：内置平台服务（相机/蓝牙/位置/通知）默认不申请；需要时在这里声明，
+  再从 C++ 调 services::requestPermission(...)。
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="dev.cui.gallery"
+    android:versionCode="1"
+    android:versionName="1.0">
+
+    <!-- minSdkVersion 28：与 CMakePresets 的 ANDROID_PLATFORM=android-28 同口径
+         （抬下限的原因在 scripts/package_apk.sh 里：vcpkg 的 ffmpeg@arm64-android
+         需要 bionic 自 API 28 才有的 glob/globfree）。改这里必须同时改脚本。 -->
+    <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="34" />
+
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+
+    <application
+        android:label="cui Gallery"
+        android:icon="@android:drawable/sym_def_app_icon"
+        android:hasCode="true"
+        android:allowBackup="false"
+        android:extractNativeLibs="false"
+        android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen">
+
+        <activity
+            android:name="dev.cui.gallery.GalleryActivity"
+            android:label="cui Gallery"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden|keyboard|navigation|uiMode|density|fontScale|layoutDirection|locale">
+            <meta-data android:name="android.app.lib_name" android:value="cui_gallery" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

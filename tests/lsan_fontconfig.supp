@@ -1,0 +1,15 @@
+# LeakSanitizer suppressions for fontconfig's process-lifetime global caches.
+#
+# fontconfig deliberately keeps matched patterns (and its expat-parsed font
+# config) alive for the whole process, so every run "leaks" a few hundred
+# bytes that ASan flags even though the UI library itself is leak-free. The
+# cui entry frame is Application() -> Painter::resolveTypeface ->
+# FcFontMatch; suppress only below fontconfig's own Fc*/expat symbols so real
+# leaks in cui code still surface.
+#
+# Usage: LSAN_OPTIONS=suppressions=<path>/lsan_fontconfig.supp ./asan_test
+leak:FcConfigParseAndLoadFromMemoryInternal
+leak:FcConfigValues
+leak:FcInitLoadOwnConfig
+leak:FcPatternObject*
+leak:FcValueList*

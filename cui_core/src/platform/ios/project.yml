@@ -1,0 +1,55 @@
+# iOS Xcode 工程描述（XcodeGen，https://github.com/yonaskolb/XcodeGen）。
+#
+# 用法：xcodegen generate --spec flutter/src/platform/ios/project.yml \
+#                         --project flutter/src/platform/ios/
+# 生成 ios.xcodeproj 后，用 Xcode 打开或 package_ipa.sh 直接 xcodebuild。
+#
+# 注意：
+#   - ios_window.mm 已由 CMake（ios preset）编进 libcui-core.a，这里不再编它，
+#     只编宿主源（Swift 平台桥 + CuiHost.mm + CuiApp.swift）并链接两个静态库。
+#   - __CUI_BUILD_DIR__ 是占位符，由 package_ipa.sh 用实际构建目录替换。
+#   - 引擎用 C 桥 + 弱符号钩子，链接静态库时必须 -force_load，否则
+#     cui_ios_* / createAppRoot 等符号被裁剪 → 链接期 unresolved。
+
+name: cui_core
+options:
+  bundleIdPrefix: dev.cui_core
+  deploymentTarget:
+    iOS: "13.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    PRODUCT_NAME: cui_core
+    PRODUCT_BUNDLE_IDENTIFIER: dev.cui_core.gallery
+    INFOPLIST_FILE: Info.plist
+    SWIFT_OBJC_BRIDGING_HEADER: cui_ios_bridging.h
+    SWIFT_VERSION: 5.0
+    ENABLE_BITCODE: false
+    DEAD_CODE_STRIPPING: true
+    LIBRARY_SEARCH_PATHS: $(inherited) __CUI_BUILD_DIR__
+    HEADER_SEARCH_PATHS: $(inherited) $(PROJECT_DIR)/../../flutter/include $(PROJECT_DIR)/../../examples
+    OTHER_LDFLAGS: $(inherited) -lc++ -framework UIKit -framework Foundation -framework CoreGraphics -framework QuartzCore -force_load __CUI_BUILD_DIR__/libcui-core.a -force_load __CUI_BUILD_DIR__/libcui_app.a
+targets:
+  cui:
+    type: application
+    platform: iOS
+    sources:
+      - path: CuiApp.swift
+      - path: CuiBridge.swift
+      - path: CuiPlatformServices.swift
+      - path: CuiBluetoothService.swift
+      - path: CuiCameraService.swift
+      - path: CuiHost.mm
+      - path: cui_ios_bridging.h
+      - path: Info.plist
+    dependencies:
+      - framework: Foundation
+      - framework: UIKit
+      - framework: CoreGraphics
+      - framework: QuartzCore
+      - lib: libcui-core.a
+      - lib: libcui_app.a
+    info:
+      path: Info.plist
+      properties:
+        UILaunchScreen: {}

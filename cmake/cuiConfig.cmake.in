@@ -1,0 +1,32 @@
+# cui CMake package configuration.
+#
+# Usage:
+#   find_package(cui CONFIG REQUIRED)
+#   target_link_libraries(my_app PRIVATE cui::cui)
+#
+# cui::cui is the aggregate INTERFACE target over the two engine libraries
+# cui::cui-core (libcui-core.*) and cui::cui-wx (libcui-wx.*, links core).
+# The optional widget packages are exported as cui::cui_charts /
+# cui::cui_code_editor / cui::cui_dock / cui::cui_video.
+
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+if("@USE_SKIA@" STREQUAL "ON")
+    find_dependency(unofficial-skia CONFIG)
+endif()
+
+# WebAssembly builds are single-threaded (no pthread); every other platform
+# links Threads::Threads through cui_common.
+if(NOT "@CUI_PLATFORM@" STREQUAL "web")
+    find_dependency(Threads)
+endif()
+
+if("@SKIA_HAVE_VULKAN@" STREQUAL "TRUE")
+    find_dependency(Vulkan)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/cuiTargets.cmake")
+
+check_required_components(cui)

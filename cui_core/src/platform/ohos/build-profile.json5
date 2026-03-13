@@ -1,0 +1,45 @@
+{
+  // cui_core Gallery 的 HarmonyOS 宿主工程配置（DevEco / hvigor）。
+  //
+  // 口径与 Android 侧对齐：bundleName dev.cui_core.gallery（见
+  // platform/android/AndroidManifest.xml 的 package）。
+  //
+  // signingConfigs 刻意留空：签名由外部脚本用 SDK 自带的 hap-sign-tool 完成
+  // （toolchains/lib/hap-sign-tool.jar + OpenHarmony.p12 +
+  // UnsgnedDebugProfileTemplate.json），不走 DevEco 的自动签名，所以
+  // assembleHap 出的是 entry/build/default/outputs/default/
+  // entry-default-unsigned.hap。
+  "app": {
+    "signingConfigs": [],
+    "products": [
+      {
+        "name": "default",
+        "signingConfig": "default",
+        "compatibleSdkVersion": "5.0.0(12)",
+        "runtimeOS": "HarmonyOS",
+      }
+    ],
+    "buildModeSet": [
+      {
+        "name": "debug",
+      },
+      {
+        "name": "release"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "entry",
+      "srcPath": "./entry",
+      "targets": [
+        {
+          "name": "default",
+          "applyToProducts": [
+            "default"
+          ]
+        }
+      ]
+    }
+  ]
+}

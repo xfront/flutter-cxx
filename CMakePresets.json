@@ -1,0 +1,375 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build-${presetName}",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CUI_LIBRARY_TYPE": "SHARED",
+        "VCPKG_INSTALLED_DIR": "$env{VCPKG_ROOT}/installed"
+      }
+    },
+    {
+      "name": "windows-base",
+      "hidden": true,
+      "inherits": "base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-dynamic"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "x64-windows-debug",
+      "displayName": "x64 Windows Debug (MSVC)",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "x64-windows-release",
+      "displayName": "x64 Windows Release (MSVC)",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "x64-linux",
+      "displayName": "x64 Linux (GCC)",
+      "inherits": "base",
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic",
+        "CMAKE_CXX_COMPILER": "g++"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "x64-linux-debug",
+      "displayName": "x64 Linux Debug (GCC, libraries)",
+      "inherits": "x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "x64-linux-release",
+      "displayName": "x64 Linux Release (GCC)",
+      "inherits": "x64-linux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "x64-linux-asan",
+      "displayName": "x64 Linux Debug + AddressSanitizer",
+      "inherits": "x64-linux-debug",
+      "cacheVariables": {
+        "CUI_SANITIZE": "address"
+      }
+    },
+    {
+      "name": "x64-linux-ubsan",
+      "displayName": "x64 Linux Debug + UndefinedBehaviorSanitizer",
+      "inherits": "x64-linux-debug",
+      "cacheVariables": {
+        "CUI_SANITIZE": "undefined"
+      }
+    },
+    {
+      "name": "x64-linux-asan-ubsan",
+      "displayName": "x64 Linux Debug + ASan + UBSan",
+      "inherits": "x64-linux-debug",
+      "cacheVariables": {
+        "CUI_SANITIZE": "address,undefined"
+      }
+    },
+    {
+      "name": "macos-base",
+      "hidden": true,
+      "inherits": "base",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "cacheVariables": {
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "11.0"
+      }
+    },
+    {
+      "name": "macos-arm64-debug",
+      "displayName": "macOS arm64 Debug (Apple Silicon)",
+      "inherits": "macos-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "VCPKG_TARGET_TRIPLET": "arm64-osx"
+      }
+    },
+    {
+      "name": "macos-arm64-release",
+      "displayName": "macOS arm64 Release (Apple Silicon)",
+      "inherits": "macos-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "VCPKG_TARGET_TRIPLET": "arm64-osx"
+      }
+    },
+    {
+      "name": "macos-x64-debug",
+      "displayName": "macOS x64 Debug (Intel)",
+      "inherits": "macos-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_OSX_ARCHITECTURES": "x86_64",
+        "VCPKG_TARGET_TRIPLET": "x64-osx"
+      }
+    },
+    {
+      "name": "macos-x64-release",
+      "displayName": "macOS x64 Release (Intel)",
+      "inherits": "macos-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_OSX_ARCHITECTURES": "x86_64",
+        "VCPKG_TARGET_TRIPLET": "x64-osx"
+      }
+    },
+    {
+      "name": "ios-base",
+      "hidden": true,
+      "inherits": "base",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "cacheVariables": {
+        "CMAKE_SYSTEM_NAME": "iOS",
+        "CMAKE_OSX_SYSROOT": "iphoneos",
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "13.0",
+        "VCPKG_TARGET_TRIPLET": "arm64-ios",
+        "CUI_BUILD_TESTS": "OFF",
+        "CUI_BUILD_EXAMPLES": "OFF",
+        "CUI_BUILD_IDE": "OFF"
+      }
+    },
+    {
+      "name": "ios-arm64-debug",
+      "displayName": "iOS arm64 Debug (device)",
+      "inherits": "ios-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "ios-arm64-release",
+      "displayName": "iOS arm64 Release (device)",
+      "inherits": "ios-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "android-base",
+      "hidden": true,
+      "inherits": "base",
+      "cacheVariables": {
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "$env{ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake",
+        "ANDROID_ABI": "arm64-v8a",
+        "ANDROID_PLATFORM": "android-28",
+        "VCPKG_TARGET_TRIPLET": "arm64-android",
+        "CUI_BUILD_TESTS": "OFF"
+      }
+    },
+    {
+      "name": "android-arm64-debug",
+      "displayName": "Android arm64 Debug (NDK)",
+      "inherits": "android-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "android-arm64-release",
+      "displayName": "Android arm64 Release (NDK)",
+      "inherits": "android-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "wasm32-emscripten-debug",
+      "displayName": "WebAssembly Debug (Emscripten)",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build-wasm-debug",
+      "cacheVariables": {
+        "CUI_LIBRARY_TYPE": "STATIC",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "wasm32-emscripten",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/build-wasm-debug/vcpkg_installed",
+        "VCPKG_OVERLAY_PORTS": "${sourceDir}/cmake/vcpkg-overlay-ports",
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "$env{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+      }
+    },
+    {
+      "name": "wasm32-emscripten-release",
+      "displayName": "WebAssembly Release (Emscripten)",
+      "inherits": "base",
+      "binaryDir": "${sourceDir}/build-wasm-release",
+      "cacheVariables": {
+        "CUI_LIBRARY_TYPE": "STATIC",
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "wasm32-emscripten",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/build-wasm-release/vcpkg_installed",
+        "VCPKG_OVERLAY_PORTS": "${sourceDir}/cmake/vcpkg-overlay-ports",
+        "VCPKG_CHAINLOAD_TOOLCHAIN_FILE": "$env{EMSDK}/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "x64-windows-debug",
+      "configurePreset": "x64-windows-debug"
+    },
+    {
+      "name": "x64-windows-release",
+      "configurePreset": "x64-windows-release"
+    },
+    {
+      "name": "x64-linux-debug",
+      "configurePreset": "x64-linux-debug"
+    },
+    {
+      "name": "x64-linux-release",
+      "configurePreset": "x64-linux-release"
+    },
+    {
+      "name": "x64-linux-asan",
+      "configurePreset": "x64-linux-asan"
+    },
+    {
+      "name": "x64-linux-ubsan",
+      "configurePreset": "x64-linux-ubsan"
+    },
+    {
+      "name": "x64-linux-asan-ubsan",
+      "configurePreset": "x64-linux-asan-ubsan"
+    },
+    {
+      "name": "macos-arm64-debug",
+      "configurePreset": "macos-arm64-debug"
+    },
+    {
+      "name": "macos-arm64-release",
+      "configurePreset": "macos-arm64-release"
+    },
+    {
+      "name": "macos-x64-debug",
+      "configurePreset": "macos-x64-debug"
+    },
+    {
+      "name": "macos-x64-release",
+      "configurePreset": "macos-x64-release"
+    },
+    {
+      "name": "ios-arm64-debug",
+      "configurePreset": "ios-arm64-debug"
+    },
+    {
+      "name": "ios-arm64-release",
+      "configurePreset": "ios-arm64-release"
+    },
+    {
+      "name": "android-arm64-debug",
+      "configurePreset": "android-arm64-debug"
+    },
+    {
+      "name": "android-arm64-release",
+      "configurePreset": "android-arm64-release"
+    },
+    {
+      "name": "wasm32-emscripten-debug",
+      "configurePreset": "wasm32-emscripten-debug"
+    },
+    {
+      "name": "wasm32-emscripten-release",
+      "configurePreset": "wasm32-emscripten-release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "x64-windows-debug",
+      "configurePreset": "x64-windows-debug",
+      "output": { "outputOnFailure": true }
+    },
+    {
+      "name": "x64-windows-release",
+      "configurePreset": "x64-windows-release",
+      "output": { "outputOnFailure": true }
+    },
+    {
+      "name": "x64-linux-debug",
+      "configurePreset": "x64-linux-debug",
+      "output": { "outputOnFailure": true }
+    },
+    {
+      "name": "x64-linux-release",
+      "configurePreset": "x64-linux-release",
+      "output": { "outputOnFailure": true }
+    },
+    {
+      "name": "x64-linux-asan",
+      "configurePreset": "x64-linux-asan",
+      "output": { "outputOnFailure": true }
+    },
+    {
+      "name": "x64-linux-ubsan",
+      "configurePreset": "x64-linux-ubsan",
+      "output": { "outputOnFailure": true }
+    },
+    {
+      "name": "x64-linux-asan-ubsan",
+      "configurePreset": "x64-linux-asan-ubsan",
+      "output": { "outputOnFailure": true }
+    },
+    {
+      "name": "macos-arm64-debug",
+      "configurePreset": "macos-arm64-debug",
+      "output": { "outputOnFailure": true }
+    },
+    {
+      "name": "macos-arm64-release",
+      "configurePreset": "macos-arm64-release",
+      "output": { "outputOnFailure": true }
+    },
+    {
+      "name": "macos-x64-debug",
+      "configurePreset": "macos-x64-debug",
+      "output": { "outputOnFailure": true }
+    },
+    {
+      "name": "macos-x64-release",
+      "configurePreset": "macos-x64-release",
+      "output": { "outputOnFailure": true }
+    }
+  ]
+}

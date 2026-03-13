@@ -1,0 +1,16 @@
+{
+  // types-only 包：让 ArkTS 的 `import cui_core from 'libcui.so'` 解析到
+  // 同目录的 libcui.d.ts（模块名必须与 napi 注册名 "cui_core" 对上，
+  // 文件名为 lib<name>.so）。真正的 libcui.so 由 native 那一批产出，
+  // 打包时进 HAP 的 libs/arm64-v8a/。
+  //
+  // ⚠️ 若 native 侧改为提供 entry/src/main/cpp/types/libcui 那种官方模板包，
+  //    删掉本文件并同步 entry/oh-package.json5 的依赖路径。
+  "name": "libcui.so",
+  "version": "0.1.0",
+  "description": "Type declarations for the cui napi module (ArkTS <-> C++ channel).",
+  "types": "./libcui.d.ts",
+  "main": "",
+  "author": "cui",
+  "license": ""
+}

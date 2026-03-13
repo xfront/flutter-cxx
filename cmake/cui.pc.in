@@ -1,0 +1,22 @@
+# ${pcfiledir} is <prefix>/lib/pkgconfig, so the file stays valid when the
+# install prefix is relocated instead of baking in @CMAKE_INSTALL_PREFIX@.
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+
+Name: cui
+Description: @CUI_PACKAGE_DESCRIPTION@
+Version: @PROJECT_VERSION@
+Requires.private: @CUI_PC_REQUIRES@
+Libs: -L${libdir} -lcui-wx -lcui-core
+Libs.private: @CUI_PC_LIBS@
+Cflags: -I${includedir}
+
+# NOTE: this file covers cui's own libraries and the OS frameworks it links.
+# 控件包（cui_charts / cui_code_editor / cui_dock / cui_video）不在此列：它们是
+# 可选依赖，需要时自行追加 -lcui_video 等（video 还会带出 FFmpeg / Media
+# Foundation 的链接项）。
+# Third-party dependencies (Skia, Vulkan) are not discoverable through
+# pkg-config here — CMake consumers should prefer `find_package(cui CONFIG)`,
+# which resolves them through cuiConfig.cmake.

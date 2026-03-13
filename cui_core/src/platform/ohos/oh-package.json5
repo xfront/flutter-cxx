@@ -1,0 +1,11 @@
+{
+  // 工程级包声明。devDependencies 里不放 @ohos/hypium / @ohos/hamock：
+  // 本模块没有 ohosTest / test 目录（测试骨架不在本批范围内），留着只会让
+  // 离线机器上的 ohpm install 多一次联网需求。
+  "modelVersion": "5.0.0",
+  "description": "cui gallery HarmonyOS host (ArkTS shell over the cui engine).",
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}

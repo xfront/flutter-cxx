@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "cui 图库示例模块"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "cui 引擎的宿主 Ability"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "cui Gallery"
+    }
+  ]
+}
