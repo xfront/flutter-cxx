@@ -21,11 +21,12 @@
 #include <optional>
 #include <vector>
 
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/color.h"
 #include "cui/foundation/geometry.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/theme.h"
+#include "cui/framework/framework.h"
+#include "cui/framework/render_object_widget.h"
 #include "cui/rendering/animated_size.h"  // Clip 枚举（上游 dart:ui 的 Clip）
 #include "cui/rendering/render_inkwell.h"
 #include "cui/rendering/render_material.h"
@@ -34,7 +35,6 @@
 #include "cui/widgets/gestures.h"
 #include "cui/widgets/icons.h"
 #include "cui/widgets/paint.h"
-#include "cui/framework/render_object_widget.h"
 
 namespace cui {
 

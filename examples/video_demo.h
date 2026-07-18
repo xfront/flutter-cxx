@@ -37,7 +37,7 @@
 #include <include/encode/SkJpegEncoder.h>
 
 namespace cui {
-namespace gallery {
+namespace story {
 namespace video_demo {
 
 // ── RIFF 写入器 ─────────────────────────────────────────────────────────────

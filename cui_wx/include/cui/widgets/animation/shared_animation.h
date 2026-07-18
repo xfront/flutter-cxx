@@ -19,9 +19,9 @@
 #include <map>
 #include <memory>
 
+#include "../../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/ticker.h"
 #include "cui/widgets/animation/animation.h"
-#include "cui/foundation/shared_ptr.h"
 
 namespace cui {
 

@@ -254,7 +254,7 @@ napi_value EmitEvent(napi_env env, napi_callback_info info) {
 /// 函数必须由宿主追加进同一份 exports。
 ///
 /// 这里是**弱定义**（空实现），platform/ohos/cpp/main.cpp 给强定义覆盖它。用弱符号
-/// 而不是硬 extern 引用：demo_gallery / demo_ide 这类没有宿主的 arm64-ohos 目标也
+/// 而不是硬 extern 引用：story / demo_ide 这类没有宿主的 arm64-ohos 目标也
 /// 链得动同一套引擎库（硬引用会在链接期就报 undefined symbol）。
 extern "C" __attribute__((weak)) void CuiOhosExtendHostExports(napi_env env, napi_value exports) {
     (void)env;

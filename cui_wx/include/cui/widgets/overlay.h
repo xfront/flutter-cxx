@@ -41,8 +41,8 @@
 #include <string>
 #include <vector>
 
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/framework/render_object_widget.h"
 
 namespace cui {

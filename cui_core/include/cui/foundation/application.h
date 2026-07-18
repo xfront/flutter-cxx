@@ -34,10 +34,10 @@
 #include <thread>
 #include <vector>
 
+#include "../utils/shared_ptr.h"
 #include "cui/platform/event.h"
 #include "cui/utils/lock_free_queue.h"
 #include "cui/utils/thread_pool.h"
-#include "cui/foundation/shared_ptr.h"
 
 namespace cui {
 

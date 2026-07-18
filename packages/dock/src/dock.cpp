@@ -38,9 +38,9 @@
 #include <sstream>
 #include <utility>
 
+#include "../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/application.h"
 #include "cui/foundation/painter.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/theme.h"
 #include "cui/widgets/layout.h"
 #include "cui/widgets/paint.h"
@@ -3224,7 +3224,7 @@ private:
     /// 收全部指针事件 —— 不用 `GestureDetector` 是因为它只在按下后才转发
     /// Move，边条的悬停展开收不到无按键的 Hover。
     SharedPtr<Widget> buildPanel(const BoxConstraints& c) {
-        // 停靠面板始终由父级给紧约束（ide 的 dock 区 / gallery 的 Expanded）；
+        // 停靠面板始终由父级给紧约束（ide 的 dock 区 / story 的 Expanded）；
         // 无界约束下没有可排布的矩形，LayoutBuilder 会退化到 biggest()=1e18。
         if (!(c.maxWidth > 0.0) || !(c.maxHeight > 0.0) ||
             c.maxWidth >= BoxConstraints::kInfinity ||

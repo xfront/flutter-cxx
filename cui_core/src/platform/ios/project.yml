@@ -1,7 +1,7 @@
 # iOS Xcode 工程描述（XcodeGen，https://github.com/yonaskolb/XcodeGen）。
 #
-# 用法：xcodegen generate --spec flutter/src/platform/ios/project.yml \
-#                         --project flutter/src/platform/ios/
+# 用法：xcodegen generate --spec cui_core/src/platform/ios/project.yml \
+#                         --project cui_core/src/platform/ios/
 # 生成 ios.xcodeproj 后，用 Xcode 打开或 package_ipa.sh 直接 xcodebuild。
 #
 # 注意：
@@ -27,7 +27,7 @@ settings:
     ENABLE_BITCODE: false
     DEAD_CODE_STRIPPING: true
     LIBRARY_SEARCH_PATHS: $(inherited) __CUI_BUILD_DIR__
-    HEADER_SEARCH_PATHS: $(inherited) $(PROJECT_DIR)/../../flutter/include $(PROJECT_DIR)/../../examples
+    HEADER_SEARCH_PATHS: $(inherited) $(PROJECT_DIR)/../../cui_core/include $(PROJECT_DIR)/../../examples
     OTHER_LDFLAGS: $(inherited) -lc++ -framework UIKit -framework Foundation -framework CoreGraphics -framework QuartzCore -force_load __CUI_BUILD_DIR__/libcui-core.a -force_load __CUI_BUILD_DIR__/libcui_app.a
 targets:
   cui:

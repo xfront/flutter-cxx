@@ -3,7 +3,7 @@
 # 预设：x64-windows-debug / x64-windows-release
 # 前置：Visual Studio 或 Build Tools（「使用 C++ 的桌面开发」）+ vcpkg。
 # 产物：源码根 dist/ 下统一放置 cui_core-core.lib / cui_core-wx.lib / *.dll、
-#       demo_gallery.exe、demo_ide.exe、vs2022.exe 及 vcpkg 的 skia/ffmpeg DLL。
+#       story.exe、demo_ide.exe、vs2022.exe 及 vcpkg 的 skia/ffmpeg DLL。
 
 function(cui_windows_main)
     if(NOT CMAKE_HOST_WIN32)
@@ -36,10 +36,10 @@ function(cui_windows_main)
     cui_report_libs("${_dir}")
     cui_exe_suffix(_exe)
     cui_step("可执行文件")
-    cui_report_file("${_dir}" "../dist/demo_gallery${_exe}" "示例画廊")
+    cui_report_file("${_dir}" "../dist/story${_exe}" "示例画廊")
     cui_report_file("${_dir}" "../dist/demo_ide${_exe}" "示例 IDE")
     cui_report_file("${_dir}" "../dist/vs2022${_exe}" "可视化设计器")
     cui_info("")
-    cui_info("运行示例：${_dir}\\..\\dist\\demo_gallery${_exe}")
+    cui_info("运行示例：${_dir}\\..\\dist\\story${_exe}")
     cui_footer("${_dir}")
 endfunction()

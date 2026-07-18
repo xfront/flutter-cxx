@@ -56,10 +56,10 @@
 // RichTextEditor（对齐 Quill）独立成头：它不反向依赖本文件。
 #include "cui/widgets/rich_text_editor.h"
 // CodeEditor（对齐 code_forge）已拆成独立包（cui_core/code_editor/code_editor.h）：
-// flutter 本体不依赖任何 package，用它的调用方自己 include。
+// 引擎本体不依赖任何 package，用它的调用方自己 include。
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/framework/element.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/rendering/render_box.h"
 
 /// 同 data.h：为避免与 legacy 层同名类（cui_core::Splitter / cui_core::Form /
@@ -1402,9 +1402,6 @@ private:
     std::string label_;
     Color color_;
 };
-
-// ── CodeEditor ────────────────────────────────────────────────────────────────
-// 已拆成独立包：见 "cui_core/code_editor/code_editor.h"（flutter 本体不包含它）。
 
 // ── Settings ──────────────────────────────────────────────────────────────────
 /// 设置项。kind：0 = Switch，1 = Checkbox，2 = 纯文本值。

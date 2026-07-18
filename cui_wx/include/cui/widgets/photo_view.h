@@ -97,7 +97,7 @@
 #include <string>
 #include <vector>
 
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/change_notifier.h"
 #include "cui/foundation/color.h"
 #include "cui/foundation/events.h"
@@ -105,15 +105,15 @@
 #include "cui/foundation/image_provider.h"
 #include "cui/foundation/key.h"
 #include "cui/foundation/matrix4.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/ticker.h"
+#include "cui/framework/framework.h"
+#include "cui/framework/listener.h"
 #include "cui/widgets/animation/animation.h"
 #include "cui/widgets/basic.h"
 #include "cui/widgets/container.h"
 #include "cui/widgets/extended_image.h"
 #include "cui/widgets/hero.h"
 #include "cui/widgets/layout.h"
-#include "cui/framework/listener.h"
 #include "cui/widgets/navigator.h"
 #include "cui/widgets/pages.h"
 #include "cui/widgets/paint.h"

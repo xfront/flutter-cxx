@@ -3,7 +3,7 @@
 # 预设：macos-arm64-debug / macos-arm64-release / macos-x64-debug / macos-x64-release
 # 前置：Xcode 命令行工具 + vcpkg；Apple 平台的 Skia 走 metal + graphite。
 # 产物：源码根 dist/ 下统一放置 libcui-core.* / libcui-wx.*、
-#       demo_gallery、demo_ide 及 vcpkg 的 libskia.dylib / libav*.dylib 等。
+#       story、demo_ide 及 vcpkg 的 libskia.dylib / libav*.dylib 等。
 
 function(cui_macos_main)
     if(NOT CMAKE_HOST_APPLE)
@@ -40,9 +40,9 @@ function(cui_macos_main)
 
     cui_report_libs("${_dir}")
     cui_step("可执行文件")
-    cui_report_file("${_dir}" "../dist/demo_gallery" "示例画廊")
+    cui_report_file("${_dir}" "../dist/story" "示例画廊")
     cui_report_file("${_dir}" "../dist/demo_ide" "示例 IDE")
     cui_info("")
-    cui_info("运行示例：${_dir}/../dist/demo_gallery")
+    cui_info("运行示例：${_dir}/../dist/story")
     cui_footer("${_dir}")
 endfunction()

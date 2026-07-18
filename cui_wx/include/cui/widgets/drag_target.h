@@ -56,16 +56,16 @@
 #include <typeinfo>
 #include <vector>
 
-#include "cui/framework/element.h"
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/events.h"
 #include "cui/foundation/geometry.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/ticker.h"
+#include "cui/framework/element.h"
+#include "cui/framework/framework.h"
+#include "cui/framework/listener.h"
 #include "cui/rendering/render_box.h"
 #include "cui/rendering/render_flex.h"
 #include "cui/widgets/basic.h"
-#include "cui/framework/listener.h"
 #include "cui/widgets/overlay.h"
 
 namespace cui {

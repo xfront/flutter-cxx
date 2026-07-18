@@ -1,697 +1,349 @@
-# CUI
+# Flutter-CXX (Flutter for C++)
 
-一个基于 **C++20 + Skia** 的跨平台自绘 GUI 框架，采用 **三层架构**（Widget/Element/RenderObject）+ 响应式单向数据流，灵感来源于现代声明式 UI 框架与 Redux。
+A cross-platform **self-drawn GUI framework** built on **C++20 + Skia**: the **Widget / Element / RenderObject three-layer pipeline** plus a unidirectional reactive data flow. Widgets, layout, animation and rasterization are all produced by the framework itself — one codebase covers desktop, mobile and Web.
 
-## 设计理念
+[English](README.md) | [简体中文](README_zh.md)
 
-CUI 将现代前端框架的核心思想引入 C++ 桌面开发：
+<p align="center">
+  <img src="https://img.shields.io/static/v1?label=platform&message=Windows%20%7C%20macOS%20%7C%20Linux%20%7C%20Android%20%7C%20iOS%20%7C%20HarmonyOS%20%7C%20Web&color=2A8EE0" alt="platforms" />&nbsp;
+  <img src="https://img.shields.io/static/v1?label=client&message=Desktop%20%7C%20Mobile%20%7C%20Web&color=4CAF50" alt="clients" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/static/v1?label=C%2B%2B&message=20&color=00599C" alt="C++20" />&nbsp;
+  <img src="https://img.shields.io/static/v1?label=renderer&message=Skia&color=97C077" alt="Skia" />&nbsp;
+  <img src="https://img.shields.io/static/v1?label=build&message=CMake%20%2B%20vcpkg&color=064482" alt="CMake + vcpkg" />&nbsp;
+  <img src="https://img.shields.io/static/v1?label=tests&message=60%20CTest&color=8CA1AF" alt="60 CTest cases" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/static/v1?label=release&message=0.1.0&color=8A2BE2" alt="release 0.1.0" />&nbsp;
+  <img src="https://img.shields.io/static/v1?label=license&message=MIT&color=41B448" alt="MIT License" />&nbsp;
+  <img src="https://img.shields.io/github/stars/xfront/flutter-cxx?style=flat&color=007EC6" alt="GitHub stars" />
+</p>
+
+## Gallery
+
+Everything below is drawn by the framework itself (Skia software raster) — no native widget is involved on any platform.
+
+| | |
+|:---:|:---:|
+| ![story chart page](screen/gallery.png)<br>**`story` in its dockable IDE-style shell** — the *Charts* page, radar tab. Fourteen self-drawn chart widgets behind one `ChartHost`, with the tab bar folding into a dropdown when it overflows. | ![chat demo](screen/chat.png)<br>**Chat demo** (`CUI_PAGE=3`) — conversation list, bubbles, date separators, unread badge, `CircleAvatar`, input bar with IME-ready text editing. |
+| ![easing showcase](screen/animation.png)<br>**Animation page** (`CUI_PAGE=1`) — the easing-curve showcase, one row of dots per curve, driven by `AnimationController` + `CurvedAnimation`. Shot in the “liquid glass” look (`CUI_GLASS=1`). | ![visual designer](screen/ide.png)<br>**Visual designer** — target `vs2022` (`CUI_BUILD_IDE`, sources in [`ide/`](ide)): solution tree, toolbox, property grid, class view and an embedded terminal. |
+
+The gallery window mounts the same dock layout as the designer (`cui_dock`): page list, solution explorer, toolbox, property grid, terminal, error list. Its status bar shows the page count *at the time of the shot* — the live count is in the section on examples below.
+
+Re-shooting any page locally:
+
+```bash
+CUI_PAGE=19 CUI_SHOT=charts.png CUI_EXIT_AFTER_START=1 ./dist/story
+CUI_PAGE=1  CUI_GLASS=1 CUI_SHOT=animation.png CUI_EXIT_AFTER_START=1 ./dist/story
+```
+
+- The engine core (`cui_core`), the widget layer (`cui_wx`) and the four widget packages under `packages/*` share one `cui` namespace and one include style (`#include "cui/..."`).
+- The desktop sample [`story`](examples/story.cpp) is a **51-page** widget tree — charts, video, docking, image tools, a visual-designer shell and more — and it is the *same* tree on Web, Android and OHOS.
+- Optional state management via `Store<State, Action>` (MVI): `dispatch(Action) → reducer → Property.changed() → setState()`. An interactive demo lives on the [Value Input page](examples/story_shell.cpp) (`CUI_PAGE=15`).
+- Current test surface: **60 CTest cases** registered on the Linux debug tree; the widget layer holds **54 headers** (51 top-level + 3 under `animation/`).
+
+## Repository layout
+
+The former `flutter/` tree was split into `cui_core/` (engine) and `cui_wx/` (widgets); `flutter_basic/` and `flutter_extra/` were folded into the matching directories.
 
 ```
-    ┌──────────┐    State     ┌──────┐
-    │  Store   │─────────────▶│ View │
-    │(Reducer) │              │      │
-    └────▲─────┘              └──┬───┘
-         │                       │
-    Action/Intent          User interaction
-         │                       │
-    ┌────┴───────────────────────▼───┐
-    │         dispatch()             │
-    └────────────────────────────────┘
+cui/
+├── cui_core/                  # engine core (library target cui_core)
+│   ├── include/cui/{foundation,framework,rendering,platform,reactive,utils}
+│   └── src/{foundation,framework,rendering,platform}
+│       └── platform/           # x11 / wayland / win32 / cocoa / ios / android / ohos / web + services
+├── cui_wx/                    # widget layer (library target cui_wx)
+│   ├── include/cui/widgets/   # 51 widget headers + animation/ (54 .h in total)
+│   └── src/widgets/
+├── packages/                  # widget packages (one library each, depend on cui_wx only)
+│   ├── charts/                # cui_charts — 14 chart widgets, all self-drawn
+│   ├── code_editor/           # cui_code_editor
+│   ├── dock/                  # cui_dock
+│   └── video/                 # cui_video (system decoders + FFmpeg)
+├── examples/                  # story (one widget tree for desktop / web / mobile) + app assets
+│   ├── platform/android/      # AndroidManifest.xml for the APK entry
+│   └── res/                   # i18n resources (strings*.xml / translations.ini)
+├── ide/                       # visual designer (target vs2022, CUI_BUILD_IDE)
+├── cmake/                     # one-command build + platform toolchains + vcpkg overlay ports
+├── scripts/                   # package_{apk,hap,ipa,web}.sh + web_verify.mjs
+├── tests/                     # 60 CTest cases
+├── docs/BUILDING.md           # installation / packaging / cross-platform build reference
+├── dist/                      # single output root (libs, examples, IDE, tests — copyable as-is)
+├── AGENTS.md                  # development conventions, architecture notes, past pitfalls
+├── LICENSE                    # MIT license text
+└── screen/                    # the four screenshots shown above
 ```
 
-- **Store** — 唯一状态源，持有应用状态
-- **Action** — 用户意图（Increment、Decrement…）
-- **Reducer** — 纯函数，`(State, Action) → NewState`
-- **View** — 状态的纯函数，通过 Signal/Observable 响应式更新
+**Linking**: the `cui` target is an INTERFACE aggregate (`cui_wx` + `cui_core`); the packages are linked individually as `cui_charts` / `cui_code_editor` / `cui_dock` / `cui_video`. The `include/` directories of both engine layers are on the include path, so header paths never carry a directory prefix.
 
-## 快速开始
+Host entry points for the mobile backends live inside the engine (`cui_core/src/platform/{android,ohos,ios}`: native main, Java / Swift / ArkTS bridges, HAP and XcodeGen project skeletons); only the app product definitions are in `examples/CMakeLists.txt`.
 
-### 依赖
+## Quick start
 
-- C++20 编译器（GCC 13+ / Clang 16+ / MSVC 19.35+）
-- CMake 3.20+、Ninja
-- [vcpkg](https://github.com/microsoft/vcpkg)（管理 Skia 等依赖，需设置 `VCPKG_ROOT`）
-- Linux: `libxcb`、`fontconfig`、`libX11`（可选，用于 CJK 输入法）
-- Android 需要 `ANDROID_NDK_HOME`，Web 需要 [emsdk](https://emscripten.org/)（`EMSDK`，或 `build.sh web --install-emsdk` 自动安装）
+### Prerequisites
 
-### 构建
+- A C++20 compiler (GCC 13+ / Clang 16+ / MSVC 19.35+), CMake 3.20+ (3.25+ recommended), Ninja
+- [vcpkg](https://github.com/microsoft/vcpkg) (Skia / FFmpeg / ICU …; `VCPKG_ROOT` must be set)
+- Linux: `libxcb`, `fontconfig`, `libX11` (optional — enables XIM input method)
+- Android: `ANDROID_NDK_HOME`; OHOS: `OHOS_NDK_HOME`; Web: [emsdk](https://emscripten.org/) (`EMSDK`); iOS: macOS + Xcode + XcodeGen
 
-一键脚本（Windows 不需要 Git Bash；参数最终转成预设调用）：
+### Build
+
+```bash
+bash build.sh                      # Linux / macOS: full debug build + ctest
+bash build.sh release              # Release
+bash build.sh linux asan           # Sanitizers
+bash build.sh web --serve          # build wasm, then serve it over local HTTP
+bash build.sh --help               # platforms / profiles / all options
+```
 
 ```bat
-build.cmd                 :: 当前主机 debug 全量构建 + ctest
-build.cmd release         :: Release
-build.cmd --help          :: 平台 / profile / 全部选项
+build.cmd                          :: Windows: full debug build for the current host + ctest
+build.cmd release
+build.cmd --help
 ```
+
+Both entry scripts are pure CMake (`cmake/build.cmake`) and simply translate arguments into `CMakePresets` invocations, so a script build and an IDE/CI preset build produce exactly the same result. `build.cmd` locates Visual Studio and loads `vcvars64.bat` for you — Git Bash is not required.
+
+Or use the presets directly:
 
 ```bash
-bash build.sh                # Linux / macOS 同上
-bash build.sh linux asan     # Sanitizer
-bash build.sh web --serve    # 构建 wasm 并起本地 HTTP 服务
+cmake --list-presets=all
+cmake --preset x64-linux-debug      # or x64-windows-* / macos-* / ios-* / android-* / wasm32-emscripten-*
+cmake --build build-x64-linux-debug
+ctest --test-dir build-x64-linux-debug --output-on-failure   # 60 cases
+./dist/story                       # every artifact lands in the repo-root dist/
 ```
 
-也可以直接走 [CMakePresets.json](CMakePresets.json)：
+Common switches (root `CMakeLists.txt`): `CUI_BUILD_EXAMPLES`, `CUI_BUILD_IDE`, `CUI_BUILD_TESTS` (all default ON), `CUI_VIDEO_FFMPEG`, `CUI_VIDEO_FFMPEG_VCPKG`, `CUI_ENABLE_INSTALL`, plus `CUI_LIBRARY_TYPE`, `CUI_SANITIZE`, `CUI_DIST_DIR`. The full table is in [docs/BUILDING.md](docs/BUILDING.md).
 
-```bash
-cmake --list-presets=all          # 查看本机可用预设
-cmake --preset x64-linux-debug    # 或 x64-windows-debug / macos-arm64-debug / wasm32-emscripten-debug …
-cmake --build --preset x64-linux-debug
-ctest --preset x64-linux-debug    # 原生平台注册了测试
+Platform-specific notes: Web limitations in [cui_core/src/platform/web/README.md](cui_core/src/platform/web/README.md); OHOS needs `OHOS_SDK_ROOT` pointing at the *parent* of `native/`.
 
-# 运行示例
-./dist/demo_gallery
-```
+### Minimal example
 
-安装、打包、各平台调试与 Sanitizer 的完整说明见
-[docs/BUILDING.md](docs/BUILDING.md)；Web 端特有限制见
-[src/platform/web/README.md](cui_core/src/platform/web/README.md)。
-
-### 最小示例
+The API is real: `cui::SharedPtr` / `cui::make_shared`, `StatefulWidget` + `State::setState()`. Widgets are immutable configuration — do not try to mutate a `Text` in place.
 
 ```cpp
-#include <cui/foundation/application.h>
-#include <cui/widgets/basic.h>        // Column
-#include <cui/widgets/interactive.h>  // ElevatedButton
-#include <cui/widgets/text.h>         // Text / TextStyle
+#include "cui/foundation/application.h"
+#include "cui/widgets/basic.h"        // Column
+#include "cui/widgets/interactive.h"  // ElevatedButton
+#include "cui/widgets/text.h"         // Text / TextStyle
+
+using namespace cui;
+
+class HelloPage : public StatefulWidget {
+public:
+    std::unique_ptr<State> createState() override;
+    std::string toStringShort() const override { return "HelloPage"; }
+};
+
+class HelloPageState : public State {
+public:
+    SharedPtr<Widget> build(BuildContext&) override {
+        auto label = cui::make_shared<Text>(
+            "Clicked " + std::to_string(count_) + " times", TextStyle().size(24.0));
+        auto button = cui::make_shared<ElevatedButton>(
+            cui::make_shared<Text>("Click Me"),
+            [this] { ++count_; setState(); });
+        auto col = cui::make_shared<Column>(
+            std::vector<SharedPtr<Widget>>{label, button});
+        col->setMainAxisSize(MainAxisSize::Min);
+        return col;
+    }
+private:
+    int count_ = 0;
+};
+
+std::unique_ptr<State> HelloPage::createState() {
+    return std::make_unique<HelloPageState>();
+}
 
 int main() {
-    using namespace cui;
-
     Application app;
     app.createWindow("Hello CUI", 400, 300);
-
-    auto label = std::make_shared<Text>("Hello, World!", TextStyle().size(24.0));
-
-    auto btn = std::make_shared<ElevatedButton>(
-        std::make_shared<Text>("Click Me"), [label] {
-            label->setText("Clicked!");
-        });
-
-    auto box = std::make_shared<Column>(
-        std::vector<std::shared_ptr<Widget>>{label, btn});
-    box->setMainAxisSize(MainAxisSize::Min);
-
-    app.setRoot(box);          // 直接挂载控件树
+    app.setRoot(cui::make_shared<HelloPage>());
     return app.run();
 }
 ```
 
-### MVI 模式示例
+`Application` also supports multiple windows (`createWindow` / `closeWindow` / `windowCount`), offscreen windows for headless rendering (`createOffscreenWindow`, `saveScreenshot`) and cross-thread work (`runAsync`, `postTask`).
+
+### State management: Store (MVI)
+
+[`cui_core/include/cui/utils/store.h`](cui_core/include/cui/utils/store.h) provides `Store<State, Action>`: state is value-semantic, the reducer is a pure function, and `Property<State>::changed()` is a `Signal` you subscribe to in order to trigger `setState()`.
 
 ```cpp
-// 状态
-struct CounterState { int count = 0; };
+#include <variant>
+#include "cui/utils/store.h"
 
-// 意图
-struct Increment {};
-struct Decrement {};
-using Action = std::variant<Increment, Decrement>;
-
-// Reducer
-auto reducer = [](const CounterState& s, const Action& a) -> CounterState {
-    return std::visit([&](auto&& intent) -> CounterState {
-        using T = std::decay_t<decltype(intent)>;
-        if constexpr (std::is_same_v<T, Increment>) return {s.count + 1};
-        if constexpr (std::is_same_v<T, Decrement>) return {s.count - 1};
-        return s;
-    }, a);
+struct CounterState {
+    int count = 0;
+    bool operator==(const CounterState&) const = default;  // Property dedupes with !=
 };
-
-// 使用
-Store<CounterState, Action> store(CounterState{}, reducer);
-store.dispatch(Increment{});
-store.subscribe([](const CounterState& s) { /* 更新视图 */ });
-```
-
-## 控件一览
-
-### 基础控件
-
-| 控件 | 说明 |
-|------|------|
-| `Button` | 按钮，支持海拔阴影与焦点环 |
-| `Checkbox` | 复选框 |
-| `Radio` / `ButtonGroup` | 单选按钮（互斥组） |
-| `Slider` | 滑动条 |
-| `LinearProgressIndicator` | 进度条 |
-| `Switch` | 开关 |
-| `SpinBox` | 数值输入框（前缀/后缀） |
-| `DropdownButton` | 下拉选择框 |
-| `TextField` | 单行文本输入 |
-| `TextEdit` | 多行文本编辑器 |
-
-### 数据展示
-
-| 控件 | 说明 |
-|------|------|
-| `Text` | 文本标签 |
-| `Card` | 卡片容器（带海拔阴影） |
-| `Badge` | 徽标（数字/红点） |
-| `CircleAvatar` | 头像（圆形/圆角） |
-| `Chip` | 标签/筛选条 |
-| `Tooltip` | 工具提示 |
-| `TableView` | 表格视图 |
-| `TreeView` | 树形视图 |
-| `ListView` / `ListWidget` | 列表视图（虚拟列表：懒加载 Model，只渲染可见行） |
-| `GridView` | 网格视图 |
-| `Calendar` | 日历 |
-
-#### 虚拟列表 (Virtual List)
-
-`ListView` 基于 `ListModel` 抽象按需读取数据：每帧只查询、只绘制可见行
-（O(visible)，与总行数无关），百万行数据无需全部驻留内存。
-
-```cpp
-class LogModel : public ListModel {
-public:
-    int rowCount() const override { return 1'000'000; }
-    std::string data(int row) const override {
-        return "Log entry #" + std::to_string(row + 1);  // 按需生成
-    }
-};
-
-auto list = std::make_shared<ListView>();
-list->setModel(std::make_shared<LogModel>());
-```
-
-- `StringListModel` / `ListWidget` — 内存数据源的便捷实现
-- 交互：滚轮 / 滚动条（thumb 拖拽 + 轨道翻页）/ 键盘导航
-  （Up/Down/PageUp/PageDown/Home/End，Return 激活）/ 双击
-- `modelReset()` 信号：批量数据变更后重新钳制滚动位置并清理越界选择
-
-### 布局系统
-
-| 控件 | 说明 |
-|------|------|
-| `Column` / `Row` | 垂直 / 水平排列 |
-| `Flex` / `Expanded` | 弹性布局（flex-grow / flex-shrink） |
-| `Wrap` | 自动换行布局 |
-| `Stack` / `Positioned` | 层叠布局 |
-| `Align` / `Center` | 对齐容器 |
-| `SizedBox` | 固定尺寸容器 |
-| `Container` | 装饰 + 内边距 + 约束组合 |
-| `SingleChildScrollView` / `ListView` / `GridView` | 滚动区域 |
-| `Splitter` | 可拖拽分割条 |
-
-### 高级组件
-
-| 控件 | 说明 |
-|------|------|
-| `TabBar` / `TabBarView` | 标签页与标签页视图 |
-| `Ribbon` | Office 风格功能区工具栏 |
-| `Docking` / `RootDockingPanel` | Visual Studio 风格停靠面板 |
-| `MenuBar` | 菜单栏 |
-| `AlertDialog` / `SimpleDialog` | 对话框 |
-| `PopupMenuButton` | 弹出菜单 |
-| `Drawer` | 侧边抽屉 |
-| `BottomSheet` | 底部弹出面板 |
-| `NavigationRail` | 导航栏 |
-| `ExpansionTile` | 可展开列表项 |
-| `Stepper` | 步骤条 |
-| `SearchBar` | 搜索栏 |
-| `RatingBar` | 评分条 |
-| `ColorPicker` | 颜色选择器 |
-| `TimePicker` / `DatePicker` | 时间/日期选择器 |
-
-### Material Design 3 交互特性
-
-| 特性 | 说明 |
-|------|------|
-| `InkWell` | 涟漪效果包装器 |
-| `AnimatedWidget` | 自驱动动画包装器（opacity/scale） |
-| `Animation` | 动画控制器（25 种缓动函数） |
-| `SnackBar` / `Banner` | 消息提示 |
-
-#### InkWell 涟漪效果
-
-从触摸点扩散的涟漪动画，使用 ease-out cubic 缓动：
-
-```cpp
-void InkWell::startRipple(const Point& localPos) {
-    ripple_.active = true;
-    ripple_.origin = localPos;
-    ripple_.startTime = std::chrono::steady_clock::now();
-    // 计算到最远角落的距离作为最大半径
-    double dx = std::max(localPos.x, w - localPos.x);
-    double dy = std::max(localPos.y, h - localPos.y);
-    ripple_.maxRadius = std::sqrt(dx * dx + dy * dy);
-}
-```
-
-特性：
-- 从点击位置开始扩散
-- 自动计算到最远角落的距离
-- 透明度从 `rippleAlpha` 渐变到 0
-- 动画期间持续重绘
-
-#### 焦点环
-
-Button、Checkbox、Radio 等控件支持可见焦点环，提升可访问性：
-
-```cpp
-// Button 焦点环（圆角矩形）
-if (focused_) {
-    p.setLineWidth(theme().focusRingWidth);
-    p.roundedRectangle(
-        {-ringOffset, -ringOffset, w + ringOffset * 2, h + ringOffset * 2},
-        radius + theme().focusRingRadius);
-    p.stroke();
-}
-
-// Radio 焦点环（圆形）
-if (focused_) {
-    p.circle(cx, cy, outerR + ringOffset + theme().focusRingRadius);
-    p.stroke();
-}
-```
-
-焦点事件处理：
-```cpp
-void Button::onFocusEvent(bool focused) {
-    focused_ = focused;
-    repaint();
-    Widget::onFocusEvent(focused);
-}
-```
-
-## 核心架构
-
-### 三层引擎
-
-CUI 采用 Widget / Element / RenderObject 三层对象模型，从结构上根治动画停滞、脏节点调度等经典问题：
-
-```
-    ┌──────────┐    createElement()    ┌──────────┐    owns    ┌──────────────┐
-    │  Widget   │─────────────────────▶│ Element  │──────────▶│ RenderObject │
-    │(配置蓝图) │                      │(生命周期) │           │(布局/绘制)    │
-    └──────────┘                      └────┬─────┘           └──────────────┘
-                                           │
-                                      BuildOwner
-                                     (脏 Element 重建队列)
-```
-
-| 层 | 职责 | 关键类 |
-|----|------|--------|
-| **Foundation** | 几何原语、树节点、Layer 树、Ticker | `Key`, `Offset`, `BoxConstraints`, `AbstractNode`, `Layer`, `Ticker` |
-| **Rendering** | 布局/绘制/命中测试/脏节点调度 | `RenderObject`, `RenderBox`, `RenderView`, `PipelineOwner`, `PaintingContext`, `RepaintBoundary` |
-| **Framework** | Element 生命周期、帧调度、焦点/浮层 | `Element`, `BuildOwner`, `SchedulerBinding`, `FocusManager`, `Overlay`, `Widget/State` |
-
-#### 帧五阶段
-
-每帧按固定顺序执行：
-
-| 阶段 | 职责 |
-|------|------|
-| 1. handleBeginFrame | 推进所有活跃 Ticker（动画时间在此更新，**不在 paint 内**） |
-| 2. flushBuildScope | 重建脏 Element（setState 触发的 UI 更新） |
-| 3. flushLayout | 重新布局脏 RenderObject |
-| 4. flushCompositingBits | 传播 needsCompositing 标志 |
-| 5. flushPaint + composite | 重新绘制脏 RenderObject → Layer 树 → 光栅化到 SkCanvas |
-
-#### 动画与绘制解耦
-
-旧模式（动画在 paint 内推进 + repaint 续帧）已替换为 Ticker 驱动：
-
-```cpp
-// 新方式：Ticker 在 handleBeginFrame 推进动画，与绘制完全解耦
-auto ticker = std::make_unique<Ticker>([this](Duration elapsed) {
-    animation_.tick(elapsed);           // 推进动画
-    renderObject_->markNeedsPaint();    // 标记脏
-});
-ticker->start();
-```
-
-### 响应式原语
-
-```
-Signal<Args...>     ── 类型安全的信号/槽，支持 connect/disconnect/emit
-Observable<T>       ── 响应式流，支持 filter/map/take_until/combine_latest
-Property<T>         ── 可观察属性（值变化时自动通知）
-Store<State,Action> ── MVI Store（单向数据流）
-```
-
-### 布局协议
-
-约束式布局，每个控件实现两个方法：
-
-```cpp
-Size measure(const Size& available);  // 计算期望尺寸
-void arrange(const Rect& rect);       // 确定最终位置和大小
-```
-
-### 主题系统
-
-运行时可切换的多主题系统，支持 4 种内置预设：
-
-```cpp
-theme() = Theme::light();    // 亮色
-theme() = Theme::dark();     // 暗色
-theme() = Theme::ocean();    // 海洋
-theme() = Theme::forest();   // 森林
-
-// 自定义单个字段
-theme().primary = Color::fromRGB(0.8, 0.2, 0.5);
-```
-
-#### 海拔系统 (Elevation System)
-
-参考 Material Design 3 的统一海拔层级，为控件提供一致的阴影效果：
-
-| 级别 | 用途 | offset | shadowAlpha | blurRadius |
-|------|------|--------|-------------|------------|
-| elevation0 | 无海拔 | 0.0 | 0 | 0.0 |
-| elevation1 | 卡片、按钮 | 1.0 | 12 | 2.0 |
-| elevation2 | 抬起卡片 | 2.0 | 18 | 4.0 |
-| elevation3 | 浮动、对话框 | 3.0 | 24 | 6.0 |
-| elevation6 | 菜单、弹出框 | 6.0 | 30 | 10.0 |
-| elevation8 | 导航抽屉 | 8.0 | 36 | 14.0 |
-| elevation12 | 底部表单 | 12.0 | 42 | 18.0 |
-| elevation16 | 模态对话框 | 16.0 | 48 | 22.0 |
-
-控件根据状态自动切换海拔：Button 默认 elevation1，悬停 elevation3，聚焦 elevation2，按下 elevation1。
-
-#### 语义化色彩体系
-
-```cpp
-// 主要色系
-primary              // 主要强调色
-primaryContainer     // 主要容器背景
-onPrimaryContainer   // 主要容器上的文字
-
-// 辅助色系
-secondary            // 辅助强调色
-secondaryContainer   // 辅助容器背景
-
-// 第三色系
-tertiary             // 第三强调色
-tertiaryContainer    // 第三容器背景
-
-// 轮廓和遮罩
-outline              // 重要轮廓
-outlineVariant       // 微妙轮廓
-scrim                // 遮罩层（对话框背景）
-```
-
-#### 交互状态覆盖层
-
-```cpp
-ripple          // 涟漪效果颜色（primary + alpha）
-hoverOverlay    // 悬停状态覆盖层
-pressedOverlay  // 按下状态覆盖层
-```
-
-#### 焦点环与涟漪配置
-
-```cpp
-// 焦点环
-focusRingWidth    = 2.0   // 焦点环宽度
-focusRingOffset   = 2.0   // 焦点环与控件间隙
-focusRingRadius   = 4.0   // 焦点环额外圆角
-
-// 涟漪效果
-rippleDuration    = 300.0  // 涟漪动画时长（ms）
-rippleMaxRadius   = 150.0  // 最大半径（px）
-rippleAlpha       = 40     // 透明度（0-255）
-```
-
-#### 其他主题令牌
-
-- **间距系统** — spacingXS / SM / MD / LG / XL
-- **圆角系统** — radiusSmall / radiusMedium / radiusLarge / radiusPill
-- **字体层级** — fontSizeCaption / Body / Subtitle / Title / Headline
-
-### 动画系统
-
-内置动画框架，提供 25 种缓动函数和完整的动画生命周期管理。
-
-#### 核心组件
-
-**Animation** — 基础动画控制器，管理时间、进度和状态：
-
-```cpp
-auto anim = std::make_shared<Animation>(300);  // 300ms
-anim->setEasing(Easing::EaseOutCubic);
-anim->progressChanged().subscribe([](double p) {
-    // p: 0.0 → 1.0
-});
-anim->finished().connect([] { /* 动画完成 */ });
-anim->start();
-```
-
-**ValueAnimation<T>** — 在两个值之间进行插值动画：
-
-```cpp
-// 透明度动画
-auto fade = std::make_shared<ValueAnimation<double>>(0.0, 1.0, 500);
-fade->setEasing(Easing::EaseInOutSine);
-fade->onUpdate([](double v) { widget->setOpacity(v); });
-fade->start();
-
-// 颜色动画
-auto color = std::make_shared<ValueAnimation<Color>>(
-    Color::fromRGB(1, 0, 0), Color::fromRGB(0, 0, 1), 1000);
-color->onUpdate([](const Color& c) { widget->setColor(c); });
-
-// 位置动画（弹簧效果）
-auto move = std::make_shared<ValueAnimation<Point>>(
-    Point{0, 0}, Point{100, 200}, 600);
-move->setEasing(Easing::Spring);
-```
-
-#### 动画配置
-
-```cpp
-anim->setLoop(true);        // 无限循环
-anim->setAutoReverse(true); // 正向播放后反向
-anim->setDelay(200);        // 延迟 200ms 启动
-anim->pause();              // 暂停
-anim->resume();             // 恢复
-```
-
-#### Widget 集成
-
-```cpp
-class MyWidget : public Widget {
-public:
-    MyWidget() {
-        auto anim = std::make_shared<Animation>(300);
-        anim->progressChanged().subscribe([this](double p) {
-            opacity_ = p;
-            repaint();  // 触发重绘
+struct Inc {};
+struct Dec {};
+using Action = std::variant<Inc, Dec>;
+
+int main() {
+    cui::Store<CounterState, Action> store(CounterState{},
+        [](const CounterState& s, const Action& a) -> CounterState {
+            if (std::holds_alternative<Inc>(a)) return {s.count + 1};
+            return {s.count - 1};
         });
-        addAnimation(anim);  // 生命周期绑定
-        anim->start();
-    }
-    void paint(Painter& p) override {
-        updateAnimations();  // 更新所有动画
-        p.setOpacity(opacity_);
-        // ... 绘制代码
-    }
-};
+
+    store.subscribe([](const CounterState& s) { /* setState() and rebuild the view */ });
+    store.dispatch(Inc{});
+    // store.currentState() for a snapshot; store.state().changed() connects to a Signal directly
+    return store.currentState().count;
+}
 ```
 
-#### 25 种缓动函数
+**Runnable demo**: the *Value Input* page of `story` (`CUI_PAGE=15`) contains `StoreDemo` — the SpinBox and ButtonGroup only `dispatch(Action)`, the `Store` is the single source of truth, and the page shows count, dispatch total, last action, step and alignment.
 
-| 类别 | 函数 |
-|------|------|
-| 线性 | `Linear` |
-| 二次方 | `EaseInQuad`, `EaseOutQuad`, `EaseInOutQuad` |
-| 三次方 | `EaseInCubic`, `EaseOutCubic`, `EaseInOutCubic` |
-| 四次方 | `EaseInQuart`, `EaseOutQuart`, `EaseInOutQuart` |
-| 五次方 | `EaseInQuint`, `EaseOutQuint`, `EaseInOutQuint` |
-| 正弦 | `EaseInSine`, `EaseOutSine`, `EaseInOutSine` |
-| 指数 | `EaseInExpo`, `EaseOutExpo`, `EaseInOutExpo` |
-| 圆形 | `EaseInCirc`, `EaseOutCirc`, `EaseInOutCirc` |
-| 回弹 | `EaseInBack`, `EaseOutBack`, `EaseInOutBack` |
-| 弹性 | `EaseInElastic`, `EaseOutElastic`, `EaseInOutElastic` |
-| 弹簧 | `Spring` |
+## Core architecture
 
-#### 实用函数
-
-```cpp
-auto fadeIn = cui::fadeIn(300);    // 淡入
-auto slideIn = cui::slideIn(300);  // 滑入（EaseOutCubic）
-```
-
-#### 最佳实践
-
-1. 使用 `std::shared_ptr` 管理动画对象
-2. 在构造函数中添加动画，确保生命周期与 Widget 一致
-3. 使用 `onUpdate` 回调比订阅 `progressChanged` 更简洁
-4. 多个动画可同时运行，实现复杂组合效果
-5. 缓动选择建议：UI 过渡用 `EaseInOutCubic`，物理效果用 `Spring`，简单提示用 `EaseOutQuad`，加载指示用 `Linear`
-
-#### 动画能力一览
-
-| 特性 | CUI |
-|------|----------|
-| 缓动函数 | 25 种 |
-| 值动画 | `Tween` + `Animation` |
-| 控制器 | `Animation` |
-| Widget 集成 | `StatefulWidget` / `State` |
-| 响应式 | `Observable` / `ValueListenable` |
-| 弹簧动画 | `Easing::Spring` |
-
-### 异步任务
-
-```cpp
-// 线程池 + 回调（自动回到 GUI 线程）
-app.runAsync(
-    [] { return heavyComputation(); },        // 后台线程执行
-    [](auto result) { updateUI(result); }     // GUI 线程回调
-);
-```
-
-### 弹出层机制
-
-下拉菜单、Tooltip 等需要覆盖在其他控件上方的元素通过统一的弹出层管理：
-
-```cpp
-app.addPopup(widget);    // 注册为顶层弹出层
-app.removePopup(widget); // 移除
-```
-
-弹出层在每帧最后绘制（覆盖整个控件树），并优先接收鼠标事件。
-
-### 国际化 (i18n)
-
-类似 Android 的字符串资源机制，支持从外部 XML/INI 文件加载翻译：
-
-#### 资源文件结构
+### The three-layer pipeline
 
 ```
-res/
-├── values/strings.xml          ← 英语（默认）
-├── values-zh/strings.xml       ← 中文
-└── translations.ini            ← INI 备选格式
+    Widget (immutable config)  ── createElement() ──▶  Element (lifecycle / rebuild)
+                                                          │ owns
+                                                          ▼
+                                                  RenderObject (layout / paint / hit-test)
 ```
 
-#### XML 格式（Android 风格）
+| Layer | Directory | Key classes |
+|-------|-----------|-------------|
+| Foundation | `cui_core/include/cui/foundation` | `Key`, `Size`, `Offset`, `BoxConstraints`, `Theme`, `Ticker`, `SharedPtr` |
+| Rendering | `cui_core/include/cui/rendering` + `cui_core/src/rendering` | `RenderObject`, `RenderBox`, `RenderFlex`, `RenderView`, `PipelineOwner`, `PaintingContext`, `RenderViewport` |
+| Framework | `cui_core/include/cui/framework` + `cui_core/src/framework` | `Widget`, `State`, `BuildOwner`, `SchedulerBinding`, `FocusManager`, `Overlay`, `Application` |
+| Widgets | `cui_wx/` | layout / text / input / interaction / scrolling / animation / dialogs / navigation |
 
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="home">Home</string>
-    <string name="settings">Settings</string>
-</resources>
-```
+Each frame runs five phases: `handleBeginFrame` (advance tickers) → `flushBuildScope` (rebuild dirty elements) → `flushLayout` → `flushCompositingBits` → `flushPaint + composite` (rasterize dirty rectangles onto the `SkCanvas`). Animation time advances only in the first phase, never inside `paint`.
 
-#### INI 格式（单文件多语言）
+**Layout** is Flutter-style constraint-based layout: `BoxConstraints` flow downward, `RenderBox::performLayout()` decides its own size, and the parent positions the children (not `measure`/`arrange`). `RenderCustomPaint` fills tight constraints via `constraints.constrain(preferredSize)`, which is why self-drawn widgets such as charts adapt to their parent automatically.
 
-```ini
-[en]
-home=Home
-settings=Settings
-
-[zh]
-home=主页
-settings=设置
-```
-
-#### 使用方式
-
-```cpp
-// 方式一：Android 风格目录扫描（推荐）
-Translator::instance().loadFromDirectory("res");
-
-// 方式二：加载单个文件
-Translator::instance().loadXmlFile("strings.xml", "zh");
-Translator::instance().loadIniFile("translations.ini");
-
-// 切换语言
-Translator::instance().setLanguage("zh");
-auto text = tr("home");  // → "主页"
-```
-
-新增语言只需创建 `examples/res`，无需修改代码。
-
-## 平台支持
-
-| 平台 | 窗口系统 | 状态 |
-|------|---------|------|
-| Linux | XCB + Xlib (XIM) | ✅ 完整支持 |
-| Windows | Win32 | 🔧 桩代码 |
-| macOS | Cocoa | 🔧 桩代码 |
-| iOS | UIKit | 🔧 桩代码 |
-| Android | Android NDK | 🔧 桩代码 |
-| Web | Emscripten | 🔧 桩代码 |
-
-## 项目结构
+### Reactive primitives
 
 ```
-cui/
-├── include/cui/           # 公共头文件
-│   ├── foundation/            # Foundation 层：Key/Offset/Layer/Ticker 等
-│   ├── rendering/             # Rendering 层：RenderObject/PipelineOwner 等
-│   ├── framework/             # Framework 层：Element/BuildOwner/Binding 等
-│   ├── platform/              # 平台窗口抽象
-│   ├── widget.h               # 旧控件基类（仍工作，可逐步迁移）
-│   ├── application.h          # 应用入口 & 事件循环
-│   ├── animation.h            # 动画系统（支持 Ticker 驱动）
-│   ├── theme.h                # 主题系统
-│   └── ...                    # 80+ 控件头文件
-├── src/
-│   ├── foundation/            # Foundation 层实现
-│   ├── rendering/             # Rendering 层实现
-│   ├── framework/             # Framework 层实现
-│   └── platform/              # 全部平台实现
-│       ├── win32_window.cpp / x11_window.cpp / wayland_window.cpp
-│       ├── cocoa_window.mm / ios_window.mm / android_window.cpp / web_window.cpp
-│       ├── services/              # 平台通道、权限、相机、蓝牙等平台服务
-│       ├── android/java/          # Android JNI 宿主参考实现
-│       ├── ios/                   # iOS Swift 桥宿主参考实现
-│       ├── ohos/                  # HarmonyOS ArkTS 桥宿主参考实现
-│       └── web/                   # Emscripten shell.html 与说明
-├── cmake/                   # 一键构建入口实现（build.cmake + platforms/*.cmake）
-├── build.cmd / build.sh       # 仓库根的一键构建入口（Windows / Linux·macOS）
-├── res/                       # 资源文件（Android 风格）
-├── examples/                  # 示例程序
-├── tests/                     # 测试
-├── CMakeLists.txt             # 顶层构建配置
-└── vcpkg.json                 # 依赖声明
+Signal<Args...>     ── connect / disconnect / emit (snapshot iteration, re-entrant safe)
+Property<T>         ── emits changed() when the value differs (T must support ==)
+Observable<T>       ── stream operators: filter / map / combine_latest …
+Store<State,Action> ── MVI unidirectional flow, see above
 ```
 
-## 示例程序
+All of them live in `cui_core/include/cui/reactive/`; `Store` is in `cui/utils/store.h`.
 
-<p align="center">
-  <a href="examples/gallery.cpp"><img src="screen/gallery.png" alt="Gallery" width="800"/></a>
-  <br/>
-  <em>Gallery — 全控件展示</em> <code>gallery_example</code>
-</p>
+### Theme and i18n
 
-<p align="center">
-  <a href="examples/chat.cpp"><img src="screen/chat.png" alt="Chat" width="800"/></a>
-  <br/>
-  <em>Chat — 聊天界面</em> <code>chat_example</code>
-</p>
+- Eight presets: `Theme::light/dark/ocean/forest/skyBlue/orange/lavender/ide`, plus `Theme::fromName()`. `story` switches at start-up with `CUI_THEME=dark`.
+- `Translator::instance().loadFromDirectory("examples/res")` reads `strings*.xml` / `translations.ini`; `setLanguage()` + `tr(key)` switch at runtime. Five languages ship: `en`, `zh`, `zh-TW`, `fr`, `ko` (`CUI_LANG` selects at start-up).
 
-<p align="center">
-  <a href="examples/ide.cpp"><img src="screen/ide.png" alt="IDE" width="800"/></a>
-  <br/>
-  <em>IDE — 停靠面板</em> <code>ide_example</code>
-</p>
+### Animation
 
-<details>
-<summary><b>其他示例</b></summary>
+`cui_wx/include/cui/widgets/animation/animation.h`: `Animation<T>` / `AnimationController` / `Tween<T>` / `CurvedAnimation` / `SpringSimulation` / `TweenSequence`, 26 `Easing` curves (including `Spring`), `fadeIn()` / `slideIn()` helpers. Explicit transitions are in `widgets/transition.h` (Fade / Scale / Rotation / Slide / Size / Align / Matrix Transition, `ListenableBuilder`, `ValueListenableBuilder`); implicit animations are in `widgets/implicit_animation.h` (`AnimatedOpacity/Scale/Rotation/Slide/Padding/Align/Positioned/Container`, `AnimatedSwitcher`, `AnimatedCrossFade`, `TweenAnimationBuilder`) plus `widgets/animated_size.h` (`AnimatedSize`).
 
-| 目标 | 说明 |
-|------|------|
-| `counter_example` | MVI 模式最小示例 |
-| `spreadsheet_example` | 类 Excel 表格（键盘导航 + 编辑） |
-| `animation_demo` | 动画系统演示（缓动函数 + 值动画） |
-| `async_demo` | 异步任务 + 线程池 |
-| `custom_widget_example` | 自定义自绘控件 |
+## Widgets and packages
 
-</details>
+### Basic input
 
-## 输入法支持
+| Widget | Notes |
+|--------|-------|
+| `ElevatedButton` / `OutlinedButton` / `TextButton` / `IconButton` | button family (elevation, focus ring, InkWell ripple) |
+| `Checkbox` / `Radio` / `ButtonGroup` | selection and mutually exclusive choice |
+| `Slider` / `SpinBox` / `LinearProgressIndicator` / `Switch` | numeric values and toggles |
+| `DropdownButton` / `ComboBox` / `TextField` / `RichTextEditor` | dropdowns and text input (IME and focus routing included) |
+| `CodeEditor` (package) | multi-line editor with syntax highlighting |
 
-Linux 平台通过 XIM 协议支持 CJK 输入法：
+### Data display
 
-- 预编辑字符串（preedit）实时显示
-- 候选窗口跟随光标位置
-- 通过 `Widget::imCommit()` 接收输入法提交的文本
+`Text` / `RichText`, `Card`, `Badge`, `CircleAvatar`, `Chip`, `Tooltip`, `TreeView`, `Calendar`, `ListView`, `GridView`, `SnackBar`. For spreadsheet-style needs see the Spreadsheet demo page of `story` and `packages/code_editor`.
 
-## 许可证
+**Lazily built lists (slivers)**: `ListView::builder` / `ListView::separated` / `GridView::builder` go through `CustomScrollView + SliverList/SliverGrid` and only build the visible window ± `cacheExtent`; `ListView(children)` and `GridView.count` are the eager entry points. `VirtualList` (`CUI_PAGE=27`) goes one step further: rows are a data model plus a paint callback, so the tree holds exactly one leaf RenderObject and 10⁶ rows cost O(visible rows). Nothing has to stay resident that isn't on screen.
 
-MIT License
+### Layout
+
+`Column` / `Row` / `Flex` / `Expanded`, `Wrap`, `Stack` / `Positioned`, `Align` / `Center`, `SizedBox`, `Container`, `SingleChildScrollView` / `CustomScrollView`, `Splitter`, `IntrinsicWidth` / `IntrinsicHeight`.
+
+### Advanced components
+
+`TabBar` / `TabBarView` / `Tabs`, `Ribbon`, `MenuBar`, `AlertDialog` / `SimpleDialog`, `PopupMenuButton`, `Drawer`, `BottomSheet`, `NavigationRail`, `ExpansionTile`, `Stepper`, `SearchBar`, `RatingBar`, `ColorPicker`, `TimePicker` / `DatePicker`, `AppBar` / `Scaffold`, `InkWell`, `Hero`, `Draggable` / `DragTarget`, `NotificationListener`, `MouseRegion`, `InteractiveViewer`, `PhotoView`, `ExtendedImage`, `ImageEditor`, `AutoHideToolbar`, `LiquidGlass`, `AsyncBuilder`.
+
+### Packages
+
+| Package | Target | Contents |
+|---------|--------|----------|
+| `packages/charts` | `cui_charts` | 14 chart widgets on top of the `ChartHost` container — line, bar (grouped / stacked), pie, scatter, radar, bubble, waterfall, histogram, candlestick, sankey, polar, radial bar, funnel, pyramid — all self-drawn, with hover tooltips |
+| `packages/code_editor` | `cui_code_editor` | code editor |
+| `packages/dock` | `cui_dock` | VS-style dockable panels (pin, collapse, split) |
+| `packages/video` | `cui_video` | two decode routes on one backend table: system decoders (Media Foundation / AVFoundation / AMediaCodec / OH_AVDemuxer / GStreamer / HTMLVideoElement) and FFmpeg; audio goes through `AudioRing` into a platform sink |
+
+Platform services (camera, Bluetooth, haptics, file dialog, permissions, system chrome, system navigator, method/event channels) are declared in `cui_core/include/cui/platform/services/` and demoed on the *System Services* page (`CUI_PAGE=47`).
+
+## Platform support
+
+Presentation is always Skia (software raster or Graphite) → `AppWindow::blitToNativeWindow()` / `presentPixels()`, handed to the platform's window or surface.
+
+| Platform | Backend | Verified to this point |
+|----------|---------|------------------------|
+| Linux | XCB/X11 (XIM input method), Wayland | ✅ primary development environment: debug / release / ASan / UBSan presets, 60 CTest cases registered |
+| Windows | Win32 + WASAPI + Media Foundation | ✅ real-machine MSVC full-tree build and ctest |
+| Web | Emscripten + Canvas 2D `putImageData` | ✅ release wasm renders and receives clicks in headless Chrome |
+| Android | NDK + `ANativeWindow` (software blit) | ✅ APK packaging + emulator rendering/touch (soft-keyboard IME not wired) |
+| HarmonyOS | OHOS NDK + ArkTS host | ⚠️ compiles and links against the real NDK 26 (incl. Skia); never run on a device |
+| iOS | UIKit + `CALayer.contents` | ⚠️ backend, Xcode project and IPA script are in place; not run on a device |
+| macOS | Cocoa | ⚠️ only branch / syntax verification so far |
+
+Mobile and Web packaging: `scripts/package_apk.sh`, `package_hap.sh`, `package_ipa.sh`, `package_web.sh` (`--verify` runs the browser check, `--serve` starts an HTTP server). On iOS `width()/height()` return device pixels (logical points × `UIScreen.scale`) and touch coordinates are converted the same way, so Retina stays sharp; on Web the presentation uses CSS pixels and DPR is only reported, never used to enlarge the backing store. Wayland is implemented but not yet wired into CMake (it needs `wayland-scanner` for the xdg-shell headers).
+
+## Examples and verification
+
+### Executable targets
+
+| Target | Description |
+|--------|-------------|
+| `story` | 51-page widget gallery; the single application root is injected by `cui_app_root` and shared by desktop / Web / mobile |
+| `vs2022` | visual designer (`CUI_BUILD_IDE`) |
+| `story.html` | Web output (html/js/wasm/data) — like every other artifact it lands in the repo-root `dist/`, and must be served over HTTP (`scripts/package_web.sh --serve`) |
+
+`CUI_PAGE=<n>` jumps straight to a page. As of the current registry: 0 = Overview, 1 = Animation, 15 = Value Input (the Store demo), 19 = Charts, 27 = Virtual List, 42 = AnimatedSize, 43 = Intrinsic, 48 = Image, 49 = Video, 50 = Multi-window. Indices move with the registry — read `GalleryShell::pages()`, or use the name-based `GalleryShell::indexOf("视频")` (names are taken verbatim from the registry, several of them Chinese) instead of hard-coding.
+
+### Offscreen smoke tests (`examples/story.cpp`)
+
+| Environment variable | Effect |
+|----------------------|--------|
+| `CUI_PAGE=<n>` | start directly on page *n* |
+| `CUI_SHOT=<path>` | render one frame and save a PNG (runs `CUI_SEQ` first) |
+| `CUI_EXIT_AFTER_START=1` | exit after the first frame (mandatory in batch scripts, otherwise the window stays open) |
+| `CUI_SEQ="click:100,200;scroll:400;tick:3"` | action script: down / hover / up / click / rclick / scroll / tick / key / keycode |
+| `CUI_THEME=dark` / `CUI_LANG=en` | start-up theme / language |
+| `CUI_GLASS=1` | start in the “liquid glass” look |
+| `CUI_MINIMAL=1` | mount a minimal tree instead of the gallery (bridge smoke test) |
+| `CUI_VIDEO=<path or URL>` / `CUI_VIDEO_BACKEND=<auto\|system\|ffmpeg>` | video source / decode route |
+| `CUI_FORCE_RASTER=1` | skip GPU backends and force CPU raster |
+| `CUI_FPS_INTERVAL_MS=<n>` | override the frame interval |
+
+```bash
+export TMPDIR=$PWD/build-x64-linux-debug/tmp   # set this when /tmp is small
+CUI_PAGE=15 CUI_SEQ="scroll:500,400,400;tick:20" CUI_SHOT=/tmp/value.png \
+  CUI_EXIT_AFTER_START=1 ./dist/story
+ctest --test-dir build-x64-linux-debug --output-on-failure   # 60 cases
+node scripts/web_verify.mjs --dir dist --shot /tmp/web.png --click 95,353
+```
+
+`CUI_SEQ` coordinates are **actual PNG pixels** (the gallery window is 1080×800), not positions estimated from a scaled-down image.
+
+## Documentation index
+
+- [README_zh.md](README_zh.md) — 简体中文版
+- [AGENTS.md](AGENTS.md) — development conventions, architecture notes, platform pitfalls, past decisions (read before changing framework code)
+- [docs/BUILDING.md](docs/BUILDING.md) — dependency installation, per-platform build / debug / packaging, sanitizers
+- [cui_core/src/platform/web/README.md](cui_core/src/platform/web/README.md) — Web/WASM limitations and font bundling
+- [CMakePresets.json](CMakePresets.json) — every build preset
+- `packages/video/src/video_backends.{h,cpp}` — decoder backend table (see the “视频解码后端” section of AGENTS.md)
+
+## License
+
+MIT License — full text in [LICENSE](LICENSE). The same declaration is carried in [`vcpkg.json`](vcpkg.json) (`"license": "MIT"`).

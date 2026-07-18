@@ -4,7 +4,7 @@
 ///        下一帧 flushBuildScope 对其 rebuild()→markNeedsBuild() 触发 UAF
 ///        （崩溃栈顶为 `cui_core::Element::markNeedsBuild`）。
 ///
-/// 复现顺序（与 gallery 等实际使用一致）：
+/// 复现顺序（与 story 等实际使用一致）：
 ///   1. 插入条目并 pump —— 宿主 OverlayEntryWidget 挂载，hostElement 就绪；
 ///   2. entry->remove()  —— 调度 Overlay 元素（脏列表：overlay）；
 ///   3. entry->markNeedsBuild() —— 调度宿主元素（脏列表：overlay, host），
@@ -18,11 +18,11 @@
 #include <string>
 #include <vector>
 
+#include "../cui_core/include/cui/utils/shared_ptr.h"
+#include "cui/foundation/events.h"
 #include "cui/framework/build_owner.h"
 #include "cui/framework/element.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/events.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/rendering/render_view.h"
 #include "cui/widgets/basic.h"
 #include "cui/widgets/overlay.h"

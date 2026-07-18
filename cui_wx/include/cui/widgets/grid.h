@@ -28,10 +28,10 @@
 #include <utility>
 #include <vector>
 
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/rendering/sliver.h"
 #include "cui/rendering/sliver_grid.h"
 #include "cui/widgets/sliver.h"
-#include "cui/foundation/shared_ptr.h"
 
 namespace cui {
 

@@ -21,16 +21,16 @@
 #include <string>
 #include <vector>
 
-#include "cui/framework/framework.h"
-#include "cui/foundation/shared_ptr.h"
+#include "../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/theme.h"
+#include "cui/framework/focus.h"
+#include "cui/framework/framework.h"
+#include "cui/framework/listener.h"
 #include "cui/widgets/basic.h"
 #include "cui/widgets/container.h"
 #include "cui/widgets/controls.h"
-#include "cui/framework/focus.h"
 #include "cui/widgets/gestures.h"
 #include "cui/widgets/layout.h"
-#include "cui/framework/listener.h"
 #include "cui/widgets/text.h"
 #include "cui/widgets/text_input.h"
 #include "ide/design_canvas.h"

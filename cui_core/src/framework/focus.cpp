@@ -7,7 +7,7 @@
 
 #include "../../include/cui/framework/build_owner.h"
 #include "../../include/cui/framework/element.h"
-#include "cui/foundation/shared_ptr.h"
+#include "../../include/cui/utils/shared_ptr.h"
 
 namespace cui {
 

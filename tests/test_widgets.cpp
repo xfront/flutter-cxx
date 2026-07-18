@@ -25,11 +25,11 @@
 #include <memory>
 #include <vector>
 
+#include "../cui_core/include/cui/utils/shared_ptr.h"
+#include "cui/foundation/painter.h"
 #include "cui/framework/build_owner.h"
 #include "cui/framework/element.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/painter.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/rendering/render_box_widgets.h"
 #include "cui/rendering/render_object.h"
 #include "cui/rendering/render_view.h"

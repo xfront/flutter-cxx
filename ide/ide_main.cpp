@@ -23,13 +23,8 @@
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
-#include <functional>
-#include <memory>
-#include <sstream>
-#include <string>
-#include <utility>
-#include <vector>
-
+#include <cui/code_editor/code_editor.h>
+#include <cui/dock/dock.h>
 #include <cui/foundation/application.h>
 #include <cui/foundation/theme.h>
 #include <cui/rendering/render_scroll.h>
@@ -37,14 +32,18 @@
 #include <cui/widgets/container.h>
 #include <cui/widgets/controls.h>
 #include <cui/widgets/data.h>
-#include <cui/dock/dock.h>
-#include <cui/code_editor/code_editor.h>
 #include <cui/widgets/gestures.h>
 #include <cui/widgets/layout.h>
 #include <cui/widgets/scroll.h>
 #include <cui/widgets/text.h>
-#include "cui/foundation/shared_ptr.h"
+#include <functional>
+#include <memory>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include "../cui_core/include/cui/utils/shared_ptr.h"
 #include "design_codegen.h"
 #include "design_codeparser.h"
 #include "design_model.h"

@@ -23,7 +23,7 @@
 #     不会把桌面构建的依赖清掉。
 #
 # 宿主代码分两处，打包时分别收集：
-#   flutter/src/platform/android/  平台实现：cpp/main.cpp + java/dev/cui_core/framework 平台桥
+#   cui_core/src/platform/android/  平台实现：cpp/main.cpp + java/dev/cui_core/framework 平台桥
 #   examples/platform/android/     app 资产：AndroidManifest.xml + GalleryActivity.java
 # app 目标（libcui_gallery.so）的构建定义在 examples/CMakeLists.txt（应用层）；
 # 引擎目录不定义也不编译 app 目标。
@@ -34,7 +34,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-APP_DIR="$ROOT/flutter/src/platform/android"
+APP_DIR="$ROOT/cui_core/src/platform/android"
 APP_ASSETS_DIR="$ROOT/examples/platform/android"
 BUILD_DIR="$ROOT/build-android-apk"
 OUT="$ROOT/build-android-apk/cui-gallery.apk"

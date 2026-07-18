@@ -47,7 +47,7 @@
 #include <utility>
 #include <vector>
 
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/change_notifier.h"
 #include "cui/foundation/color.h"
 #include "cui/foundation/events.h"
@@ -55,9 +55,9 @@
 #include "cui/foundation/image_data.h"
 #include "cui/foundation/key.h"
 #include "cui/foundation/painter.h"
-#include "cui/foundation/shared_ptr.h"
-#include "cui/widgets/layout.h"
+#include "cui/framework/framework.h"
 #include "cui/framework/listener.h"
+#include "cui/widgets/layout.h"
 #include "cui/widgets/paint.h"
 
 namespace cui {

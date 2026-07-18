@@ -37,21 +37,21 @@
 #include <thread>
 #include <vector>
 
-#include "cui/framework/build_owner.h"
-#include "cui/framework/element.h"
-#include "cui/framework/framework.h"
+#include "../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/color.h"
 #include "cui/foundation/events.h"
 #include "cui/foundation/geometry.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/ticker.h"
+#include "cui/framework/build_owner.h"
+#include "cui/framework/element.h"
+#include "cui/framework/framework.h"
+#include "cui/framework/listener.h"
 #include "cui/rendering/render_box.h"
 #include "cui/rendering/render_object.h"
 #include "cui/rendering/render_view.h"
 #include "cui/widgets/basic.h"
 #include "cui/widgets/container.h"
 #include "cui/widgets/drag_target.h"
-#include "cui/framework/listener.h"
 #include "cui/widgets/overlay.h"
 
 using namespace cui;

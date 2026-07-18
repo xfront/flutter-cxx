@@ -16,7 +16,8 @@
 #include <thread>
 #include <type_traits>
 #include <vector>
-#include "cui/foundation/shared_ptr.h"
+
+#include "shared_ptr.h"
 
 #if defined(__cpp_lib_jthread) && __cpp_lib_jthread >= 201911L
 #define CUI_HAS_JTHREAD 1

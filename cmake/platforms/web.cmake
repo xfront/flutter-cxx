@@ -5,7 +5,7 @@
 # 前置：emsdk（预设从 $env{EMSDK} 取工具链）。脚本会自动探测常见安装位置和
 #       发行版 emscripten；都没有时可加 --install-emsdk 自动 clone + 安装。
 #       另需 wasm32-emscripten triplet 的 vcpkg 依赖。
-# 产物：源码根 dist/ 下的 demo_gallery.{html,js,wasm,data}、demo_ide.*
+# 产物：源码根 dist/ 下的 story.{html,js,wasm,data}、demo_ide.*
 #
 # --serve：用 Python 起本地 HTTP 服务（Emscripten 产物不能用 file:// 打开，
 #          浏览器会拒绝加载 wasm）。
@@ -34,19 +34,19 @@ function(cui_web_main)
 
     cui_report_libs("${_dir}")
     cui_step("可执行文件")
-    cui_report_file("${_dir}" "../dist/demo_gallery.html" "示例画廊（页面）")
-    cui_report_file("${_dir}" "../dist/demo_gallery.js" "示例画廊（入口）")
-    cui_report_file("${_dir}" "../dist/demo_gallery.wasm" "示例画廊（wasm）")
+    cui_report_file("${_dir}" "../dist/story.html" "示例画廊（页面）")
+    cui_report_file("${_dir}" "../dist/story.js" "示例画廊（入口）")
+    cui_report_file("${_dir}" "../dist/story.wasm" "示例画廊（wasm）")
     cui_report_file("${_dir}" "../dist/demo_ide.html" "示例 IDE（页面）")
     cui_info("")
 
     # shell.html 只有输出是 .html 时才会被 Emscripten 采用，这里按实际产物
     # 挑入口，而不是假定一定有页面。
-    if(EXISTS "${_dir}/../dist/demo_gallery.html")
-        set(_entry "demo_gallery.html")
+    if(EXISTS "${_dir}/../dist/story.html")
+        set(_entry "story.html")
     else()
-        set(_entry "demo_gallery.js")
-        cui_warn("没有生成 demo_gallery.html：--shell-file 只在输出为 .html 时生效。")
+        set(_entry "story.js")
+        cui_warn("没有生成 story.html：--shell-file 只在输出为 .html 时生效。")
     endif()
 
     if(CUI_SERVE)

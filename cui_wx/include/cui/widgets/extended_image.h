@@ -33,14 +33,14 @@
 #include <utility>
 #include <vector>
 
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/color.h"
 #include "cui/foundation/geometry.h"
 #include "cui/foundation/image_cache.h"
 #include "cui/foundation/image_provider.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/theme.h"
 #include "cui/foundation/ticker.h"
+#include "cui/framework/framework.h"
 #include "cui/rendering/render_icon.h"
 #include "cui/widgets/basic.h"
 #include "cui/widgets/gestures.h"

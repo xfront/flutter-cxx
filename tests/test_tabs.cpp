@@ -27,12 +27,12 @@
 #include <thread>
 #include <vector>
 
+#include "../cui_core/include/cui/utils/shared_ptr.h"
+#include "cui/foundation/events.h"
+#include "cui/foundation/ticker.h"
 #include "cui/framework/build_owner.h"
 #include "cui/framework/element.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/events.h"
-#include "cui/foundation/shared_ptr.h"
-#include "cui/foundation/ticker.h"
 #include "cui/rendering/render_box_widgets.h"
 #include "cui/rendering/render_flex.h"
 #include "cui/rendering/render_icon.h"
@@ -323,7 +323,7 @@ void testExpansionTile() {
     std::printf("[test] ExpansionTile 展开/折叠\n");
 
     // childrenPadding/expandedAlignment/expandedCrossAxisAlignment 显式给值：
-    // 上游默认都是 center（主体整块居中），gallery 与本页演示取左上。
+    // 上游默认都是 center（主体整块居中），story 与本页演示取左上。
     auto tile = cui::make_shared<ExpansionTile>(
             cui::make_shared<Text>("标题X"),
             std::vector<SharedPtr<Widget>>{
@@ -416,7 +416,7 @@ void testStepper() {
 }
 
 // ── 测试 6：复合 Tabs 在滚动页面里点击切页 ─────────────────────────────────
-// gallery 的页壳把每页放进竖向 SingleChildScrollView（主轴无限），图表页正是
+// story 的页壳把每页放进竖向 SingleChildScrollView（主轴无限），图表页正是
 // 这样用到 20 个标签 ⇒ 触发溢出下拉分支。以前无界主轴下的 Expanded 会吃掉
 // 1e18 紧约束，标签栏虽画得出来却落在父盒命中框之外（点击无响应）。
 void testTabsComposite() {

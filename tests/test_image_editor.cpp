@@ -40,16 +40,17 @@
 #include <string>
 #include <vector>
 
-#include "cui/framework/build_owner.h"
-#include "cui/framework/element.h"
-#include "cui/framework/framework.h"
+#include "../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/events.h"
 #include "cui/foundation/geometry.h"
 #include "cui/foundation/image_data.h"
 #include "cui/foundation/image_provider.h"
 #include "cui/foundation/key.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/ticker.h"
+#include "cui/framework/build_owner.h"
+#include "cui/framework/element.h"
+#include "cui/framework/framework.h"
+#include "cui/framework/listener.h"
 #include "cui/reactive/scheduler_binding.h"
 #include "cui/rendering/render_box.h"
 #include "cui/rendering/render_box_widgets.h"
@@ -59,7 +60,6 @@
 #include "cui/widgets/container.h"
 #include "cui/widgets/image_editor.h"
 #include "cui/widgets/layout.h"
-#include "cui/framework/listener.h"
 #include "cui/widgets/paint.h"
 
 using namespace cui;

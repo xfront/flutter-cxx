@@ -2,7 +2,8 @@
 /// @brief RenderObjectWidget 家族实现。
 
 #include "cui/framework/render_object_widget.h"
-#include "cui/foundation/shared_ptr.h"
+
+#include "../../include/cui/utils/shared_ptr.h"
 
 namespace cui {
 

@@ -11,7 +11,7 @@
 ///
 /// 注意：本头只有声明、没有实现。只链引擎库而不链应用实现的产物会在**链接期**
 /// 因 unresolved `cui_core::createAppRoot()` 报错 —— 这正是刻意暴露的装配错误。
-#include "cui/foundation/shared_ptr.h"
+#include "../utils/shared_ptr.h"
 
 namespace cui {
 

@@ -27,11 +27,11 @@
  *   "ohos.permission.READ_IMAGEVIDEO"        // 相册/媒体读取
  *   "ohos.permission.READ_CONTACTS"
  *
- * 注意：NativeActivity 时代不复存在；cui 引擎需要被编成 libcui.so 并由本模块
+ * 注意：NativeActivity 时代不复存在；cui 引擎需要被编成 libcui_core.so 并由本模块
  * 载入。OHOS 的窗口/输入后端（PlatformWindow）尚未实现，当前只接平台服务。
  */
 
-import cui from 'libcui.so'
+import cui from 'libcui_core.so'
 
 export type CuiMethodDispatcher = (channel: string, method: string, args: string) => string;
 

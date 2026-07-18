@@ -42,9 +42,9 @@
 #include <string>
 #include <vector>
 
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/key.h"
-#include "cui/foundation/shared_ptr.h"
+#include "cui/framework/framework.h"
 #include "cui/widgets/animation/animation.h"
 #include "cui/widgets/navigator.h"
 #include "cui/widgets/overlay.h"

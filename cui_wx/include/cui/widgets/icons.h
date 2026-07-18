@@ -16,13 +16,13 @@
 #include <memory>
 #include <string>
 
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/color.h"
-#include "cui/foundation/shared_ptr.h"
+#include "cui/framework/framework.h"
+#include "cui/framework/render_object_widget.h"
 #include "cui/rendering/render_icon.h"
 #include "cui/widgets/basic.h"
 #include "cui/widgets/gestures.h"
-#include "cui/framework/render_object_widget.h"
 #include "cui/widgets/tooltip.h"
 
 namespace cui {

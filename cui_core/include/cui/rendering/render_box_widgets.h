@@ -22,22 +22,21 @@
 ///     ContainerRenderObjectMixin）。
 
 #include <functional>
+#include <include/core/SkImage.h>
+#include <include/core/SkRefCnt.h>
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
 
-#include <include/core/SkImage.h>
-#include <include/core/SkRefCnt.h>
-
+#include "../utils/shared_ptr.h"
 #include "cui/foundation/matrix4.h"
 #include "cui/foundation/painter.h"
+#include "cui/foundation/text_style.h"
 #include "cui/rendering/painting_context.h"
-#include "cui/rendering/render_object.h"
 #include "cui/rendering/render_box.h"
 #include "cui/rendering/render_flex.h"
-#include "cui/foundation/text_style.h"
-#include "cui/foundation/shared_ptr.h"
+#include "cui/rendering/render_object.h"
 
 namespace cui {
 

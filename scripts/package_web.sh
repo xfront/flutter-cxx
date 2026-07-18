@@ -2,12 +2,12 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # 构建 Web / WebAssembly 版（wasm32-emscripten）。
 #
-#   bash scripts/package_web.sh                    # 配置 + 编译 demo_gallery
+#   bash scripts/package_web.sh                    # 配置 + 编译 story
 #   bash scripts/package_web.sh --skip-build       # 只做产物校验
 #   bash scripts/package_web.sh --serve            # 编完顺带起 http.server
 #   bash scripts/package_web.sh --verify           # 编完跑 headless 浏览器验证
 #   bash scripts/package_web.sh --preset wasm32-emscripten-debug
-#   bash scripts/package_web.sh --target demo_ide   # 默认 demo_gallery
+#   bash scripts/package_web.sh --target demo_ide   # 默认 story
 #
 # 产物校验之外的两条验证路（都要 HTTP，file:// 下 fetch .wasm/.data 会被拒）：
 #   * --verify 走 scripts/web_verify.mjs（CDP）：等真实时间把 16MB .data 下完，
@@ -24,12 +24,12 @@
 #      manifest 安装会删掉同一个根下不在当前 manifest 里的包，共享根时
 #      x64-linux ↔ wasm32-emscripten 会互相掏，桌面构建的 skia 会被清掉。
 #      首次配置会交叉编译 skia/abseil/icu/freetype 等 25 个包，耗时较长。
-#   3. cmake --build --target demo_gallery
-#      产物：examples/demo_gallery.{html,js,wasm,data}
+#   3. cmake --build --target story
+#      产物：examples/story.{html,js,wasm,data}
 #   4. 浏览器只能经 HTTP 打开（file:// 下 fetch .wasm/.data 会被拒）
 #
 # 字体：wasm 拿不到系统字体。painter.cpp 的 __EMSCRIPTEN__ 分支只认
-# flutter/src/platform/web/fonts/font.ttf（preload 到 MEMFS /cui_core/fonts/font.ttf），
+# cui_core/src/platform/web/fonts/font.ttf（preload 到 MEMFS /cui_core/fonts/font.ttf），
 # 缺字体时布局照跑但**文本全部不可见**。脚本会检查并给出抽取命令。
 #
 # 与桌面构建不同的开关（preset 里已带，无需手传）：
@@ -41,7 +41,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PRESET="wasm32-emscripten-release"
-TARGET="demo_gallery"
+TARGET="story"
 BUILD_DIR="$ROOT/build-wasm-release"
 DO_BUILD=1
 DO_SERVE=0
@@ -104,7 +104,7 @@ fi
     || die "$VCPKG_ROOT 里没有 wasm32-emscripten triplet（需较新的 vcpkg）"
 
 # ── 字体（缺失只警告，不阻断：管线/交互仍可验证）────────────────────────────
-FONT_DIR="$ROOT/flutter/src/platform/web/fonts"
+FONT_DIR="$ROOT/cui_core/src/platform/web/fonts"
 if [ ! -f "$FONT_DIR/font.ttf" ]; then
     say "warn: 缺 $FONT_DIR/font.ttf —— wasm 里文本将不可见"
     say "      从本机 Noto CJK 抽简体中文 face（需要 python3-fonttools）："

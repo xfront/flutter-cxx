@@ -2,12 +2,13 @@
 /// @brief WidgetsApp 实现。语义对齐官方 widgets/app.dart（行号注释标注）。
 
 #include "cui/widgets/widgets_app.h"
-#include "cui/foundation/shared_ptr.h"
-#include "cui/platform/services/system_navigator.h"
 
 #include <optional>
 #include <stdexcept>
 #include <utility>
+
+#include "../../../cui_core/include/cui/utils/shared_ptr.h"
+#include "cui/platform/services/system_navigator.h"
 
 namespace cui {
 

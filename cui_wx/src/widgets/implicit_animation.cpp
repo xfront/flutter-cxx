@@ -6,10 +6,10 @@
 #include <algorithm>
 #include <cmath>
 
+#include "../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/widgets/basic.h"
 #include "cui/widgets/layout.h"
 #include "cui/widgets/paint.h"
-#include "cui/foundation/shared_ptr.h"
 
 namespace cui {
 
@@ -632,7 +632,7 @@ SharedPtr<Widget> AnimatedSwitcherState::build(BuildContext& context) {
         return nullptr;
 
     // 上游把这段判定放在 didUpdateWidget；本仓宿主经常原地改同一个 Widget 对象
-    // 的 child（gallery 与测试都这么驱动），那条回调走不到，所以放在 build 开头。
+    // 的 child（story 与测试都这么驱动），那条回调走不到，所以放在 build 开头。
     // 语义不变：一次 build 内完成 entry 换班，再按新 entry 出图。
     const bool hasNew = (w->child() != nullptr);
     const bool hasOld = (current_ != nullptr);

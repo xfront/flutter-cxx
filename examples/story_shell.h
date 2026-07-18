@@ -14,9 +14,9 @@
 
 #include <vector>
 
-#include "cui/framework/framework.h"
+#include "../cui_core/include/cui/utils/shared_ptr.h"
 #include "animated_demo.h"  // AnimDemoSpec / AnimPlayback（buildAnimationDemos 签名）
-#include "cui/foundation/shared_ptr.h"
+#include "cui/framework/framework.h"
 
 namespace cui {
 
@@ -24,7 +24,7 @@ namespace cui {
 /// 平台宿主不直接调它，而是经 cui/framework/app_root.h 的 createAppRoot() 注入。
 SharedPtr<Widget> makeGalleryShell();
 
-namespace gallery {
+namespace story {
 
 class GalleryShell;  ///< 前向声明：仅 gallery_shell.cpp 需要完整定义
 

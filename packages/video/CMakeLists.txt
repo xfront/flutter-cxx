@@ -154,7 +154,7 @@ elseif(CUI_PLATFORM STREQUAL "macos" OR CUI_PLATFORM STREQUAL "ios")
     set_source_files_properties(src/video_decoder_darwin.mm PROPERTIES
         COMPILE_OPTIONS "-fobjc-arc")
     # 静态库不携带自己的系统库引用，最终链接方（examples/tests/APK）也要看到 ⇒ PUBLIC
-    # （与 flutter/src/platform 那份 `-framework Cocoa` 同一条写法）。
+    # （与 cui_core/src/platform 那份 `-framework Cocoa` 同一条写法）。
     target_link_libraries(cui_video PUBLIC
         "-framework AVFoundation" "-framework CoreMedia"
         "-framework CoreVideo" "-framework AudioToolbox")

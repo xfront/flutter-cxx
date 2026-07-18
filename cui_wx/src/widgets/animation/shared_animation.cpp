@@ -1,8 +1,9 @@
 /// @file shared_animation.cpp — SharedAnimation auto-Ticker controller.
 #include "cui/widgets/animation/shared_animation.h"
-#include "cui/foundation/shared_ptr.h"
 
 #include <algorithm>
+
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 
 namespace cui {
 

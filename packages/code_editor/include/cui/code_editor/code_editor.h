@@ -32,11 +32,11 @@
 #include <utility>
 #include <vector>
 
+#include "../../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/change_notifier.h"
 #include "cui/foundation/color.h"
 #include "cui/foundation/geometry.h"
 #include "cui/foundation/painter.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/theme.h"
 #include "cui/framework/focus.h"
 #include "cui/framework/framework.h"

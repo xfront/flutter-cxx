@@ -6,11 +6,12 @@
 /// 逐段注释里不再重复。
 
 #include "cui/rendering/sliver_grid.h"
-#include "cui/foundation/shared_ptr.h"
 
 #include <algorithm>
 #include <cmath>
 #include <typeinfo>
+
+#include "../../include/cui/utils/shared_ptr.h"
 
 namespace cui {
 

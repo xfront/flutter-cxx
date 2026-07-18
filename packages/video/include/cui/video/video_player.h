@@ -38,11 +38,11 @@
 #include <utility>
 #include <vector>
 
-#include "cui/framework/framework.h"
+#include "../../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/change_notifier.h"
 #include "cui/foundation/geometry.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/ticker.h"
+#include "cui/framework/framework.h"
 #include "cui/video/video_decoder.h"
 
 namespace cui {

@@ -1,7 +1,7 @@
 # ── cui_charts ─────────────────────────────────────────────────────────────
 # 图表控件集：数据模型（ChartGridData / LineChartData / PieChartData …）在
 # include/cui_core/charts/chart.h，绘制与 build 的实体在 src/chart.cpp。
-# 自绘实现，不依赖第三方绘图库 —— 只依赖 flutter 的控件层。
+# 自绘实现，不依赖第三方绘图库 —— 只依赖 cui_wx 的控件层。
 cui_add_library(cui_charts
         src/chart.cpp)
 

@@ -16,12 +16,12 @@
 #include <memory>
 #include <optional>
 
+#include "../cui_core/include/cui/utils/shared_ptr.h"
+#include "cui/foundation/color.h"
+#include "cui/foundation/geometry.h"
 #include "cui/framework/build_owner.h"
 #include "cui/framework/element.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/color.h"
-#include "cui/foundation/geometry.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/rendering/render_box_widgets.h"
 #include "cui/rendering/render_material.h"
 #include "cui/rendering/render_object.h"

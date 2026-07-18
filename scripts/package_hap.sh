@@ -2,16 +2,16 @@
 # ─────────────────────────────────────────────────────────────────────────────
 # 构建 OpenHarmony HAP（arm64-v8a）。
 #
-#   bash scripts/package_hap.sh                  # 配置 + 编 libcui.so + 打包 + 签名
-#   bash scripts/package_hap.sh --skip-build     # 只重新打包已有的 libcui.so
+#   bash scripts/package_hap.sh                  # 配置 + 编 libcui_core.so + 打包 + 签名
+#   bash scripts/package_hap.sh --skip-build     # 只重新打包已有的 libcui_core.so
 #   bash scripts/package_hap.sh --no-sign        # 出未签名 hap（查 PackingCheck 用）
 #   bash scripts/package_hap.sh --out x.hap      # 指定产物
 #
 # 链路：
-#   1. cmake -G Ninja（OHOS NDK 工具链 + vcpkg arm64-ohos）→ libcui.so
+#   1. cmake -G Ninja（OHOS NDK 工具链 + vcpkg arm64-ohos）→ libcui_core.so
 #      （构建定义在 examples/CMakeLists.txt，napi 模块名 "cui_core"）
 #   2. 把工程逐字节拷到**本地路径**的暂存目录，并放好 entry/libs/arm64-v8a/
-#      {libcui.so, libc++_shared.so}
+#      {libcui_core.so, libc++_shared.so}
 #   3. hvigorw assembleHap → entry-default-unsigned.hap
 #   4. hap-sign-tool 本机自造签名链（Root CA → sub CA → 应用/profile 叶子），
 #      再 sign-profile（profile 模板里的 development-certificate 换成自己的应用
@@ -36,10 +36,10 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-PROJ_SRC="$ROOT/flutter/src/platform/ohos"
+PROJ_SRC="$ROOT/cui_core/src/platform/ohos"
 BUILD_DIR="${CUI_OHOS_BUILD_DIR:-$ROOT/build-ohos-arm64}"
 STAGING="${CUI_HAP_STAGING:-}"
-OUT="${CUI_HAP_OUT:-$ROOT/build-hap-out/cui-core-gallery-signed.hap}"
+OUT="${CUI_HAP_OUT:-$ROOT/build-hap-out/cui-core-story-signed.hap}"
 ABI="arm64-v8a"
 DO_BUILD=1
 DO_SIGN=1
@@ -101,7 +101,7 @@ PROFILE_TEMPLATE="$SIGN_LIB/UnsgnedDebugProfileTemplate.json"
 # hvigor 的 PackageHap 任务内部 spawn java，PATH 里没有就报 "spawn java ENOENT"。
 export PATH="$DEVECO/jbr/bin:$DEVECO/tools/node:$DEVECO/tools/hvigor/bin:${PATH}"
 
-# ── 1. 交叉编译 libcui.so ───────────────────────────────────────────────────
+# ── 1. 交叉编译 libcui_core.so ───────────────────────────────────────────────────
 LIBCUI=""
 if [ "$DO_BUILD" = 1 ]; then
     say "configure（arm64-ohos，build dir=$BUILD_DIR）"
@@ -121,15 +121,15 @@ if [ "$DO_BUILD" = 1 ]; then
     # shellcheck disable=SC2086
     [ -n "${CUI_EXTRA_CMAKE_ARGS:-}" ] && CMAKE_ARGS+=(${CUI_EXTRA_CMAKE_ARGS})
     cmake "${CMAKE_ARGS[@]}"
-    say "build libcui.so"
+    say "build libcui_core.so"
     cmake --build "$BUILD_DIR" --target cui_ohos_host --parallel "${CUI_JOBS:-2}"
 fi
 
 # 库产物统一落在 CUI_DIST_DIR（默认源码根 dist/），不在构建树子目录里。
 DIST_DIR="$(sed -n 's/^CUI_DIST_DIR:PATH=//p' "$BUILD_DIR/CMakeCache.txt" 2>/dev/null | head -1)"
 [ -n "$DIST_DIR" ] || DIST_DIR="$ROOT/dist"
-LIBCUI="$DIST_DIR/libcui.so"
-[ -f "$LIBCUI" ] || die "找不到 libcui.so（先跑一次不带 --skip-build）：$DIST_DIR/"
+LIBCUI="$DIST_DIR/libcui_core.so"
+[ -f "$LIBCUI" ] || die "找不到 libcui_core.so（先跑一次不带 --skip-build）：$DIST_DIR/"
 say "native 库：$LIBCUI（$(stat -c %s "$LIBCUI") bytes）"
 
 STL="$NDK/llvm/lib/aarch64-linux-ohos/libc++_shared.so"
@@ -160,11 +160,11 @@ LIBS_DIR="$STAGING/entry/libs/$ABI"
 mkdir -p "$LIBS_DIR"
 STRIP="$NDK/llvm/bin/llvm-strip"
 if [ -x "$STRIP" ] || [ -f "$STRIP.exe" ]; then
-    cp "$LIBCUI" "$LIBS_DIR/libcui.so"
-    "$STRIP" --strip-unneeded "$LIBS_DIR/libcui.so"
+    cp "$LIBCUI" "$LIBS_DIR/libcui_core.so"
+    "$STRIP" --strip-unneeded "$LIBS_DIR/libcui_core.so"
 else
     say "没有 llvm-strip，直接拷未 strip 的 .so（体积会大一个量级）"
-    cp "$LIBCUI" "$LIBS_DIR/libcui.so"
+    cp "$LIBCUI" "$LIBS_DIR/libcui_core.so"
 fi
 [ -f "$STL" ] && cp "$STL" "$LIBS_DIR/libc++_shared.so"
 say "libs：$(ls "$LIBS_DIR" | tr '\n' ' ')"

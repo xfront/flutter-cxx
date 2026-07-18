@@ -17,12 +17,12 @@
 #include <string>
 #include <thread>
 
+#include "../cui_core/include/cui/utils/shared_ptr.h"
+#include "cui/foundation/events.h"
+#include "cui/foundation/ticker.h"
 #include "cui/framework/build_owner.h"
 #include "cui/framework/element.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/events.h"
-#include "cui/foundation/shared_ptr.h"
-#include "cui/foundation/ticker.h"
 #include "cui/rendering/render_box_widgets.h"
 #include "cui/rendering/render_icon.h"
 #include "cui/rendering/render_interactive.h"

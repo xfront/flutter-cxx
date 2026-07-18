@@ -38,16 +38,16 @@
 #include <optional>
 #include <vector>
 
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/change_notifier.h"
 #include "cui/foundation/events.h"
 #include "cui/foundation/geometry.h"
 #include "cui/foundation/matrix4.h"
-#include "cui/foundation/shared_ptr.h"
+#include "cui/framework/framework.h"
+#include "cui/framework/listener.h"
 #include "cui/rendering/animated_size.h"
 #include "cui/rendering/render_box_widgets.h"
 #include "cui/widgets/layout.h"
-#include "cui/framework/listener.h"
 #include "cui/widgets/paint.h"
 
 namespace cui {

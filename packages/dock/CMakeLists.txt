@@ -1,7 +1,7 @@
 # ── cui_dock ───────────────────────────────────────────────────────────────
 # 停靠系统：DockManager（树的唯一真相）/ DockPanel / DockArea / Splitter /
 # 浮动窗口 / 自动隐藏栏 / 标签拖拽换序，实现在 src/dock.cpp。
-# 只依赖 flutter 的控件层；不引用 charts / code_editor / video 任一包。
+# 只依赖 cui_wx 的控件层；不引用 charts / code_editor / video 任一包。
 cui_add_library(cui_dock
         src/dock.cpp)
 

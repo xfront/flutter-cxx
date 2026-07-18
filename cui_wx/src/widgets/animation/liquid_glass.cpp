@@ -1,15 +1,15 @@
 /// @file liquid_glass.cpp — LiquidGlass container + glass overlay render object.
 #include "cui/widgets/liquid_glass.h"
-#include "cui/foundation/shared_ptr.h"
 
 #include <algorithm>
-
 #include <include/core/SkCanvas.h>
 #include <include/core/SkColor.h>
 #include <include/core/SkRRect.h>
 #include <include/core/SkScalar.h>
 #include <include/effects/SkGradient.h>
 #include <include/effects/SkImageFilters.h>
+
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 
 namespace cui {
 

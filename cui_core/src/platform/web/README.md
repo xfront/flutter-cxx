@@ -22,15 +22,15 @@ source "$EMSDK/emsdk_env.sh"          # 或 Windows: emsdk_env.bat
 export VCPKG_ROOT=/path/to/vcpkg
 
 cmake --preset wasm32-emscripten-release
-cmake --build --preset wasm32-emscripten-release --target demo_gallery
+cmake --build --preset wasm32-emscripten-release --target story
 ```
 
 产物：
 
 ```
-build-wasm-release/examples/demo_gallery.html
-build-wasm-release/examples/demo_gallery.js
-build-wasm-release/examples/demo_gallery.wasm
+build-wasm-release/examples/story.html
+build-wasm-release/examples/story.js
+build-wasm-release/examples/story.wasm
 ```
 
 `demo_ide` 同理；测试目标在 web 下不构建（没有可用的进程/事件循环去跑
@@ -43,7 +43,7 @@ HTTP）：
 
 ```bash
 python3 -m http.server 8000 --directory build-wasm-release/examples
-# 打开 http://localhost:8000/demo_gallery.html
+# 打开 http://localhost:8000/story.html
 ```
 
 没有使用 `-pthread`：不需要 `SharedArrayBuffer`，也就不需要
@@ -60,7 +60,7 @@ python3 -m http.server 8000 --directory build-wasm-release/examples
 mkdir -p src/platform/web/fonts
 cp /path/to/NotoSansSC-Regular.otf src/platform/web/fonts/font.ttf   # 文件名固定为 font.ttf
 # 重新链接（CMake 检测到 src/platform/web/fonts/ 后会加 --preload-file）
-cmake --build --preset wasm32-emscripten-release --target demo_gallery
+cmake --build --preset wasm32-emscripten-release --target story
 ```
 
 另一个入口：运行时设置 `CUI_WEB_FONT=/绝对 MEMFS 路径` 指向预加载的字体。

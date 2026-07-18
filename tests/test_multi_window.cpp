@@ -18,17 +18,17 @@
 #include <string>
 #include <vector>
 
-#include "cui/framework/element.h"
+#include "../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/application.h"
 #include "cui/foundation/geometry.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/window.h"
+#include "cui/framework/element.h"
+#include "cui/framework/listener.h"
 #include "cui/platform/event.h"
 #include "cui/rendering/render_box.h"
 #include "cui/rendering/skia_renderer.h"
 #include "cui/widgets/basic.h"
 #include "cui/widgets/container.h"
-#include "cui/framework/listener.h"
 
 using namespace cui;
 

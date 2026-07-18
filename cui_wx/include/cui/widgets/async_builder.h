@@ -29,8 +29,8 @@
 #include <optional>
 #include <utility>
 
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/utils/future.h"
 #include "cui/utils/task.h"
 

@@ -9,8 +9,8 @@
 # 出可安装的 APK（manifest + Java + dex + .so + 签名，不需要 Gradle）：
 #       bash scripts/package_apk.sh
 # 平台宿主实现就在引擎平台目录（app 产物的构建定义在 examples/CMakeLists.txt）：
-#       flutter/src/platform/android/{java/dev/cui_core/framework, cpp/main.cpp}
-#       examples/platform/android/{AndroidManifest.xml, java/dev/cui_core/gallery}
+#       cui_core/src/platform/android/{java/dev/cui_core/framework, cpp/main.cpp}
+#       examples/platform/android/{AndroidManifest.xml, java/dev/cui_core/story}
 
 function(cui_android_main)
     if(NOT CUI_PROFILE MATCHES "^(debug|release)$")
@@ -34,7 +34,7 @@ function(cui_android_main)
     cui_report_libs("${_dir}")
     cui_info("")
     cui_info("出 APK：bash scripts/package_apk.sh（arm64-v8a，含签名）")
-    cui_info("宿主：flutter/src/platform/android（平台桥 java/ + cpp/main.cpp），")
+    cui_info("宿主：cui_core/src/platform/android（平台桥 java/ + cpp/main.cpp），")
     cui_info("      引擎与包静态链进 libcui_gallery.so，由 NativeActivity 加载。")
     cui_footer("${_dir}")
 endfunction()

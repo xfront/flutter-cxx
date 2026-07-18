@@ -31,7 +31,7 @@
         android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen">
 
         <activity
-            android:name="dev.cui.gallery.GalleryActivity"
+            android:name="dev.cui.framework.CuiActivity"
             android:label="cui Gallery"
             android:exported="true"
             android:launchMode="singleTask"

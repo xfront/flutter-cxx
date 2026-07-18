@@ -1,11 +1,11 @@
-/// @file gallery_dock.cpp — gallery 与 IDE 合并后的停靠层（实现，对应薄头
+/// @file gallery_dock.cpp — story 与 IDE 合并后的停靠层（实现，对应薄头
 /// gallery_dock.h）。
 ///
-/// 从旧 `examples/ide.cpp` 移植进 `cui_core::gallery` 命名空间。本 .cpp 持有原
+/// 从旧 `examples/ide.cpp` 移植进 `cui_core::story` 命名空间。本 .cpp 持有原
 /// 头里全部内联实现；对外类型（GalleryDockPanel / IdeLogView / IdeTextBuffer）
 /// 的方法以 out-of-line 形式给出，其余内部类/助手仍在本 TU 内联。
 
-#include "gallery_dock.h"
+#include "story_dock.h"
 
 #include <algorithm>
 #include <cstdio>
@@ -15,9 +15,9 @@
 #include <string>
 #include <vector>
 
+#include "../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/dock/dock.h"
 #include "cui/foundation/change_notifier.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/theme.h"
 #include "cui/widgets/basic.h"
 #include "cui/widgets/container.h"
@@ -31,7 +31,7 @@
 #include "cui/widgets/text.h"
 
 namespace cui {
-namespace gallery {
+namespace story {
 
 // ── IdeTextBuffer ───────────────────────────────────────────────────────────
 
@@ -58,7 +58,7 @@ SharedPtr<IdeTextBuffer> buildOutput() {
         "1>  theme.cpp\n"
         "1>  Generating Code...\n"
         "1>  cui_core -> build/cui_core\n"
-        "1>  gallery.cpp\n"
+        "1>  story.cpp\n"
         "1>  gallery_shell.h\n"
         "1>  Generating Code...\n"
         "1>  gallery_example -> build/gallery_example\n"
@@ -405,7 +405,7 @@ SharedPtr<Widget> buildSolutionExplorer() {
                 {ti("src-rend-box", "render_box.cpp"),
                  ti("src-rend-grid", "sliver_grid.cpp")})}),
          ti("ex", "examples/",
-            {ti("ex-gallery", "gallery.cpp"), ti("ex-shell", "gallery_shell.h"),
+            {ti("ex-story", "story.cpp"), ti("ex-shell", "gallery_shell.h"),
              ti("ex-dock", "gallery_dock.h")}),
          ti("tests", "tests/",
             {ti("tests-dock", "test_dock.cpp"), ti("tests-sliver", "test_sliver.cpp"),
@@ -559,7 +559,7 @@ SharedPtr<Widget> buildTerminal() {
         "[86/86] Linking CXX executable gallery_example\n"
         "$ ctest --test-dir build-x64-linux-debug\n"
         "100% tests passed, 0 tests failed out of 4\n"
-        "$ ./build-x64-linux-debug/examples/demo_gallery\n"));
+        "$ ./build-x64-linux-debug/examples/story\n"));
 }
 
 SharedPtr<Widget> buildFindResults() {
@@ -901,5 +901,5 @@ void ideBuildSolution(SharedPtr<IdeTextBuffer> outputText) {
     std::fprintf(stderr, "[ide] Build > Build Solution\n");
 }
 
-}  // namespace gallery
+}  // namespace story
 }  // namespace cui_core

@@ -29,11 +29,11 @@
 #include <thread>
 #include <vector>
 
+#include "../cui_core/include/cui/utils/shared_ptr.h"
+#include "cui/foundation/ticker.h"
 #include "cui/framework/build_owner.h"
 #include "cui/framework/element.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/shared_ptr.h"
-#include "cui/foundation/ticker.h"
 #include "cui/widgets/animation/animation.h"
 #include "cui/widgets/basic.h"
 #include "cui/widgets/modal_barrier.h"

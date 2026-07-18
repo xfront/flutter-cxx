@@ -5,7 +5,8 @@
 /// 一棵由 Align / Padding / DecoratedBox / ConstrainedBox 组成的子树。
 
 #include "cui/widgets/container.h"
-#include "cui/foundation/shared_ptr.h"
+
+#include "../../../cui_core/include/cui/utils/shared_ptr.h"
 
 namespace cui {
 

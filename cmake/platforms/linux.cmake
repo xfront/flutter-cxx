@@ -3,7 +3,7 @@
 # 预设：x64-linux-{debug,release,asan,ubsan,asan-ubsan}
 # 前置：X11/xcb、fontconfig 开发包；Skia 及其依赖由 vcpkg 提供。
 # 产物：源码根 dist/ 下统一放置 libcui-core.* / libcui-wx.*、
-#       demo_gallery、demo_ide、vs2022 及 vcpkg 的 libskia.so / libav*.so 等。
+#       story、demo_ide、vs2022 及 vcpkg 的 libskia.so / libav*.so 等。
 
 function(cui_linux_main)
     if(NOT CMAKE_HOST_UNIX OR CMAKE_HOST_APPLE)
@@ -29,7 +29,7 @@ function(cui_linux_main)
 
     cui_report_libs("${_dir}")
     cui_step("可执行文件")
-    cui_report_file("${_dir}" "../dist/demo_gallery" "示例画廊")
+    cui_report_file("${_dir}" "../dist/story" "示例画廊")
     cui_report_file("${_dir}" "../dist/demo_ide" "示例 IDE")
     cui_report_file("${_dir}" "../dist/vs2022" "可视化设计器")
     cui_info("")
@@ -37,6 +37,6 @@ function(cui_linux_main)
         cui_info("ASan 运行示例前设置：ASAN_OPTIONS=new_delete_type_mismatch=0")
         cui_info("（本机 vcpkg 的 Skia 头/库宏配置有偏斜，见 docs/BUILDING.md）")
     endif()
-    cui_info("运行示例：${_dir}/../dist/demo_gallery")
+    cui_info("运行示例：${_dir}/../dist/story")
     cui_footer("${_dir}")
 endfunction()

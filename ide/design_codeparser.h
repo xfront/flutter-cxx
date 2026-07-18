@@ -8,7 +8,8 @@
 
 #include <string>
 #include <vector>
-#include "cui/foundation/shared_ptr.h"
+
+#include "../cui_core/include/cui/utils/shared_ptr.h"
 
 namespace cui {
 namespace designer {

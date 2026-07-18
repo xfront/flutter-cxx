@@ -11,11 +11,11 @@
 #include <cassert>
 #include <map>
 
+#include "../../include/cui/utils/shared_ptr.h"
 #include "cui/framework/build_owner.h"
-#include "cui/foundation/shared_ptr.h"
+#include "cui/framework/render_object_widget.h"
 #include "cui/rendering/render_box_widgets.h"
 #include "cui/rendering/render_object.h"
-#include "cui/framework/render_object_widget.h"
 
 namespace cui {
 

@@ -5,14 +5,14 @@
   "main": "",
   "author": "cui",
   "license": "",
-  // 'libcui.so' 的模块名必须与 napi 注册名一致（见 src/platform/services/
+  // 'libcui_core.so' 的模块名必须与 napi 注册名一致（见 src/platform/services/
   // ohos_channel.cpp 里的 napi_module "cui_core" 与 ArkTS 侧 import cui_core from
-  // 'libcui.so'）。类型声明走 ets/cui_core/libcui.d.ts：那个目录被当成
-  // types-only 包（oh-package.json5 里 name = "libcui.so"、types 指向
+  // 'libcui_core.so'）。类型声明走 ets/cui_core/libcui.d.ts：那个目录被当成
+  // types-only 包（oh-package.json5 里 name = "libcui_core.so"、types 指向
   // libcui.d.ts），所以声明的**唯一真身处**仍是 libcui.d.ts。
   // ⚠️ 若 native 那批改用自己的 cpp/types/libcui 包，删掉本条依赖与
   //    src/main/ets/cui_core/oh-package.json5，别让模块名重复定义两次。
   "dependencies": {
-    "libcui.so": "file:./src/main/ets/cui"
+    "libcui_core.so": "file:./src/main/ets/cui"
   }
 }

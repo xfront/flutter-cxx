@@ -7,7 +7,7 @@
 ///   3. OtpInput —— 每格一个 FocusNode；数字写入并自动跳格，Backspace 退格，
 ///      左右移焦，非数字键与 Up/Down 一律放行给祖先（页面照常滚）。
 ///   4. Scrollable 包在外层时，它 onDown 的「点击即接焦点」不得抢走内层刚拿到
-///      焦点的控件（gallery「输入+」页实测的失效场景），但点空白处仍要吃下焦点。
+///      焦点的控件（story「输入+」页实测的失效场景），但点空白处仍要吃下焦点。
 ///   5. SpinBox —— 值区是真的输入框：键入实时改值并夹到 [min, max]、非法字符整串
 ///      退回、回车与失焦把文本规范化、▲▼ 回写文本、卸载摘干净控制器监听。
 ///   6. CommandPalette —— 查询框键入即按标题子串过滤（大小写不敏感），↑↓ 移动高亮
@@ -23,11 +23,12 @@
 #include <string>
 #include <vector>
 
+#include "../cui_core/include/cui/utils/shared_ptr.h"
+#include "cui/foundation/events.h"
 #include "cui/framework/build_owner.h"
 #include "cui/framework/element.h"
+#include "cui/framework/focus.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/events.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/platform/event.h"
 #include "cui/rendering/render_box_widgets.h"
 #include "cui/rendering/render_editable.h"
@@ -38,7 +39,6 @@
 #include "cui/widgets/container.h"
 #include "cui/widgets/controls.h"
 #include "cui/widgets/data.h"
-#include "cui/framework/focus.h"
 #include "cui/widgets/layout.h"
 #include "cui/widgets/scroll.h"
 #include "cui/widgets/text.h"
@@ -431,7 +431,7 @@ void testOtpInput() {
 // ── 5. 外层 Scrollable 不抢内层控件的焦点 ──────────────────────────────────
 // 事件自 target 向根冒泡：Scrollable 为了「点一下就能用方向键滚」也在 onDown
 // 上请求焦点。它包在 OtpInput 外面时，内层刚上焦就被外层抢回去 ⇒ 格子高亮和
-// 键盘路由一起失效（gallery「输入+」页实测）。
+// 键盘路由一起失效（story「输入+」页实测）。
 void testScrollableKeepsInnerFocus() {
     std::printf("[test] Scrollable 的点击聚焦不抢内层控件\n");
     ScrollController ctrl;

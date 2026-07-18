@@ -1,7 +1,7 @@
 /*
  * cui 的 HarmonyOS 渲染面 + 输入转发（与 native 的接缝）。
  *
- * 职责：一块全屏 XComponent（SURFACE 类型，libraryname "cui"）承担
+ * 职责：一块全屏 XComponent（SURFACE 类型，libraryname "cui_core"）承担
  *   ① surface 生命周期 → cui.startSurface / resizeSurface / stopSurface
  *   ② 触摸 / 鼠标 / 键盘 / 滚轮 → cui.dispatchXxx（坐标一律换算成**物理像素**）
  *   ③ 屏幕密度 → cui.setDensity
@@ -42,7 +42,7 @@
  *    setDensity，真机上如出现密度跳变需补 UIContext.on('densityUpdate')。
  */
 
-import cui from 'libcui.so';
+import cui from 'libcui_core.so';
 import display from '@ohos.display';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { installCuiPlatform, uninstallCuiPlatform } from '../cui/CuiBridge';
@@ -62,7 +62,7 @@ function currentDensity(): number {
 }
 
 /**
- * surface 生命周期：把 XComponent 的 surfaceId 交给 native（libcui.so 里
+ * surface 生命周期：把 XComponent 的 surfaceId 交给 native（libcui_core.so 里
  * 通过 OH_NativeWindow_CreateNativeWindowFromSurfaceId 接管，见窗口/呈现那一批），
  * 尺寸变化直接把 SurfaceRect 的 px 值下传。
  */
@@ -146,7 +146,7 @@ struct Index {
       XComponent({
         id: 'cui_surface',
         type: XComponentType.SURFACE,
-        libraryname: 'cui',
+        libraryname: 'cui_core',
         controller: this.surfaceCtrl
       })
         .width('100%')

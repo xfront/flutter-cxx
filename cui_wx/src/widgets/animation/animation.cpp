@@ -1,9 +1,10 @@
 /// @file animation.cpp — 上游-style animation system implementation.
 #include "cui/widgets/animation/animation.h"
-#include "cui/foundation/shared_ptr.h"
 
 #include <algorithm>
 #include <cmath>
+
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 
 namespace cui {
 

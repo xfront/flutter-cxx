@@ -14,8 +14,8 @@
 #include <string>
 #include <vector>
 
+#include "../utils/shared_ptr.h"
 #include "cui/foundation/color.h"
-#include "cui/foundation/shared_ptr.h"
 
 namespace cui {
 

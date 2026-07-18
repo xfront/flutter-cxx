@@ -11,12 +11,11 @@
 #include <string>
 #include <vector>
 
+#include "../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/geometry.h"
-#include "cui/rendering/render_box.h"
-#include "cui/framework/render_object_widget.h"
 #include "cui/framework/focus.h"
-#include "cui/foundation/shared_ptr.h"
-
+#include "cui/framework/render_object_widget.h"
+#include "cui/rendering/render_box.h"
 #include "ide_controller.h"
 
 namespace cui {

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────────────────────────
-# package_ipa.sh — 把 cui_core 引擎 + gallery 应用层打包成 iOS IPA。
+# package_ipa.sh — 把 cui_core 引擎 + story 应用层打包成 iOS IPA。
 #
 # 流程（对齐 package_apk.sh / package_hap.sh 的结构）：
 #   1. CMake（ios preset）把引擎编成 libcui-core.a，把应用层（cui_app_root）
 #      编成 libcui_app.a；
-#   2. XcodeGen 用 flutter/src/platform/ios/project.yml 生成 ios.xcodeproj；
+#   2. XcodeGen 用 cui_core/src/platform/ios/project.yml 生成 ios.xcodeproj；
 #   3. xcodebuild archive → exportArchive 出 IPA。
 #
 # 用法：
@@ -73,9 +73,9 @@ cmake --build "$BUILD_DIR" --target cui_core cui_app_root --parallel
 say "XcodeGen 生成 ios.xcodeproj（链接 $BUILD_DIR 的静态库）"
 GEN_YML="/tmp/cui-ios-project.yml"
 sed "s|__CUI_BUILD_DIR__|$BUILD_DIR|g" \
-    "$ROOT/flutter/src/platform/ios/project.yml" > "$GEN_YML"
+    "$ROOT/cui_core/src/platform/ios/project.yml" > "$GEN_YML"
 xcodegen generate --spec "$GEN_YML" \
-    --project "$ROOT/flutter/src/platform/ios/"
+    --project "$ROOT/cui_core/src/platform/ios/"
 
 # ── 3. xcodebuild archive ───────────────────────────────────────────────────
 SCHEME=cui_core

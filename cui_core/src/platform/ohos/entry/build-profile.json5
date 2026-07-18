@@ -2,7 +2,7 @@
   "apiType": "stageMode",
   "buildOption": {
     // ── native 侧接缝（由「OHOS napi 宿主 .so」那一批接线）────────────────
-    // libcui.so 目前还不在仓里，所以这里刻意不启用 externalNativeOptions：
+    // libcui_core.so 目前还不在仓里，所以这里刻意不启用 externalNativeOptions：
     // 一旦 entry/src/main/cpp/CMakeLists.txt 落地，把下面这段去掉注释，
     // BuildNativeWithCmake / BuildNativeWithNinja 两个任务就会真的跑
     // （arm64-v8a、OHOS NDK 工具链，与 CMakePresets 的 arm64-ohos 同口径）。
@@ -15,7 +15,7 @@
     // },
     //
     // 也可以用「预编译库」的方式代替 cmake：把交叉编译好的
-    // entry/libs/arm64-v8a/libcui.so 放进仓/打包目录，ProcessLibs 会自动收进
+    // entry/libs/arm64-v8a/libcui_core.so 放进仓/打包目录，ProcessLibs 会自动收进
     // HAP 的 libs/ 里（打包脚本 scripts/package_hap.sh 走的就是这条路）。
   },
   "buildOptionSet": [

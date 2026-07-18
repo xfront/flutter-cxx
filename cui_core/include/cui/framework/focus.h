@@ -19,8 +19,8 @@
 #include <memory>
 #include <vector>
 
+#include "../utils/shared_ptr.h"
 #include "cui/foundation/enums.h"  // KeyEventResult
-#include "cui/foundation/shared_ptr.h"
 #include "framework.h"
 #include "listener.h"
 

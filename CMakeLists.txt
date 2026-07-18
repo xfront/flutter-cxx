@@ -109,7 +109,7 @@ if(APPLE)
 endif()
 
 # ── Build options ───────────────────────────────────────────────────────────
-option(CUI_BUILD_EXAMPLES "Build the example applications (demo_gallery, dock-based)" ON)
+option(CUI_BUILD_EXAMPLES "Build the example applications (story, dock-based)" ON)
 option(CUI_BUILD_IDE "Build the visual designer (vs2022)" ON)
 option(CUI_BUILD_TESTS "Build and register the unit tests" ON)
 option(CUI_ENABLE_INSTALL "Generate install rules and CMake/pkg-config package files" ON)
@@ -125,11 +125,11 @@ if(CUI_ENABLE_PIC)
 endif()
 
 # ── Library flavour (static / shared) ───────────────────────────────────────
-# flutter 层的两个引擎库（cui_core / cui_wx）与 packages/* 的四个控件包共用
+# 引擎层的两个引擎库（cui_core / cui_wx）与 packages/* 的四个控件包共用
 # 同一个开关：
 #   STATIC（默认）⇒ libcui_core.a + libcui_wx.a + 四个包的 .a，
 #                   最终跑出单文件可执行程序；
-#   SHARED      ⇒ 六个 .so / .dll（引擎 2 + 控件包 4），gallery 等消费方
+#   SHARED      ⇒ 六个 .so / .dll（引擎 2 + 控件包 4），story 等消费方
 #                 运行时动态链接。
 # 两种情况下 target 名、头文件与链接写法完全一致，切换只需
 #   cmake -B <dir> -S . -DCUI_LIBRARY_TYPE=SHARED
@@ -243,7 +243,7 @@ add_custom_target(cui_dist ALL
 
 # ── Compiler flags ────────────────────────────────────────────────────────────
 if(MSVC)
-    # /bigobj：gallery / ide 这类「一个 TU 包下整套 header-only 控件」的文件，
+    # /bigobj：story / ide 这类「一个 TU 包下整套 header-only 控件」的文件，
     # COFF 默认 65536 个 section 装不下（模板每个 make_shared 参数包都单独成
     # COMDAT），会在链接前直接 fatal error C1128。
     # /utf-8：源文件全是无 BOM 的 UTF-8（Linux 上写的），不给这个开关 cl.exe 就按
@@ -653,7 +653,7 @@ if(CUI_PLATFORM STREQUAL "windows")
 endif()
 
 if(CUI_PLATFORM STREQUAL "web")
-    # Emitted into every executable that links `cui_core` (gallery / ide):
+    # Emitted into every executable that links `cui_core` (story / ide):
     #   - the raster surface is copied into the canvas each frame, so heap
     #     growth must be allowed for large viewports;
     #   - ccall/UTF8ToString let the page hand IME composition and paste text
@@ -780,11 +780,13 @@ endif()
 # 桌面可执行文件受 CUI_BUILD_EXAMPLES 控制；但 android / ohos 的宿主 .so 需要
 # examples 层提供的 cui_app_root（cui_core::createAppRoot 的实现），所以打包脚本即使
 # 关掉 CUI_BUILD_EXAMPLES（package_apk.sh 就是这么做的），本目录仍要进入以完成
-# 装配。examples/CMakeLists.txt 内部再按 CUI_BUILD_EXAMPLES 决定是否建 demo_gallery。
+# 装配。examples/CMakeLists.txt 内部再按 CUI_BUILD_EXAMPLES 决定是否建 story。
 if(CUI_BUILD_EXAMPLES OR CUI_BUILD_ANDROID_APP OR CUI_BUILD_OHOS_APP)
     add_subdirectory("examples")
 endif()
-if(CUI_BUILD_IDE)
+# 可视化设计器是桌面可执行文件；android/ohos 设备平台不编（ohos 的窗口后端还会
+# 引入 libnative_buffer 等系统库符号，宿主 exe 链不上）。
+if(CUI_BUILD_IDE AND NOT CMAKE_SYSTEM_NAME MATCHES "^(OHOS|Android)$")
     add_subdirectory("ide")
 endif()
 

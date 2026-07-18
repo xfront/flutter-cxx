@@ -1,10 +1,10 @@
-/// @file gallery_shell.cpp — gallery 壳 + 页面（实现，对应薄头 gallery_shell.h）。
+/// @file gallery_shell.cpp — story 壳 + 页面（实现，对应薄头 gallery_shell.h）。
 ///
 
 ///
 /// 全部由 cui_core 三层（Widget/Element/RenderObject）构成，经
-/// gallery.cpp 通过 Application::setRoot() 直接挂载并接收指针事件。
-/// 这是「gallery 宿主与页面切到 上游 流水线」的第一批：
+/// story.cpp 通过 Application::setRoot() 直接挂载并接收指针事件。
+/// 这是「story 宿主与页面切到 上游 流水线」的第一批：
 ///   - 壳：顶部标题栏 + 侧边栏页面列表 + 内容区（滚动）+ 底部状态条；
 ///   - 页面：概览 / 按钮 / 选择 / 滑块 / 图标 / Material / 布局 / 滚动。
 ///
@@ -29,10 +29,12 @@
 #include <random>
 #include <string>
 #include <thread>
+#include <type_traits>
 #include <utility>
+#include <variant>
 #include <vector>
 
-#include "cui/framework/framework.h"
+#include "../cui_core/include/cui/utils/shared_ptr.h"
 #include "animated_demo.h"
 #include "cui/charts/chart.h"
 #include "cui/code_editor/code_editor.h"     // 独立包：高级页的 CodeEditor
@@ -44,11 +46,12 @@
 #include "cui/foundation/image_data.h"      // 图像页：解码 / PNG 编码
 #include "cui/foundation/image_provider.h"  // 图像页：Memory / File / Network / Decoded 来源
 #include "cui/foundation/key.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/theme.h"
 #include "cui/foundation/ticker.h"
 #include "cui/foundation/translator.h"
-#include "cui/foundation/window.h"                   // 多窗口页：AppWindow
+#include "cui/foundation/window.h"  // 多窗口页：AppWindow
+#include "cui/framework/focus.h"
+#include "cui/framework/framework.h"
 #include "cui/platform/event.h"                      // KeyCode
 #include "cui/platform/services/app_lifecycle.h"     // 系统服务页：生命周期
 #include "cui/platform/services/bluetooth.h"         // 系统服务页：BLE
@@ -59,6 +62,7 @@
 #include "cui/platform/services/permission.h"        // 系统服务页：运行时权限
 #include "cui/platform/services/system_chrome.h"     // 系统服务页：系统 UI
 #include "cui/platform/services/system_navigator.h"  // 系统服务页：返回键
+#include "cui/utils/store.h"                         // 值输入页：MVI Store（State/Action/Reducer）
 #include "cui/video/video_player.h"                  // 视频包：controller / VideoPlayer / 进度条
 #include "cui/widgets/animated_size.h"
 #include "cui/widgets/auto_hide_toolbar.h"  // AutoHideToolbar：story 的自动隐藏工具栏页
@@ -70,7 +74,6 @@
 #include "cui/widgets/dialog.h"
 #include "cui/widgets/drag_target.h"     // Draggable / DragTarget：拖放页
 #include "cui/widgets/extended_image.h"  // ExtendedImage：占位 / 失败兜底 / 缓存
-#include "cui/framework/focus.h"
 #include "cui/widgets/gestures.h"
 #include "cui/widgets/hero.h"  // Hero / HeroController：story 的 Hero Animation 页
 #include "cui/widgets/icons.h"
@@ -94,12 +97,13 @@
 #include "cui/widgets/text.h"
 #include "cui/widgets/text_input.h"
 #include "cui/widgets/tooltip.h"
-#include "cui/widgets/transition.h"  // FadeTransition：路由转场
-#include "gallery_dock.h"            // 合并后的停靠层（DockPanel + IDE 面板 / 外壳）
-#include "video_demo.h"              // 视频页：运行时生成的 MJPEG AVI 素材
+#include "cui/widgets/transition.h"    // FadeTransition：路由转场
+#include "cui/widgets/virtual_list.h"  // VirtualList：零逐行节点虚拟列表
+#include "story_dock.h"                // 合并后的停靠层（DockPanel + IDE 面板 / 外壳）
+#include "video_demo.h"                // 视频页：运行时生成的 MJPEG AVI 素材
 
 namespace cui {
-namespace gallery {
+namespace story {
 
 // ── 控件层控件 ─────────────────────────────────────────────────────────────
 // 控件全部定义在 cui_core 命名空间，页面可直接按原名书写。
@@ -1156,7 +1160,7 @@ inline SharedPtr<Widget> pageData() {
             {"theme.h", "theme.h", {}},
         }},
         {"examples", "examples", {
-            {"gallery.cpp", "gallery.cpp", {}},
+            {"story.cpp", "story.cpp", {}},
         }},
     };
     auto treeView = cui::make_shared<TreeView>(std::move(tree), true);
@@ -1953,7 +1957,14 @@ inline SharedPtr<Widget> pageFlChart() {
     tabPages.reserve(entries.size());
     for (auto& e : entries) {
         labels.push_back(e.first);
-        tabPages.push_back(e.second);
+        // 路由内容经 Overlay(Stack) 拿到的是无界约束：高度无限，宽度需强制撑满
+        // 才能占满内容区（图表的 CustomPaint 在紧宽度下自动按实际尺寸绘制）。
+        // 只强制宽度（Container.width 钳进父约束），高度保持图表自然高度——
+        // 否则套 1e18 高会因无界变成 ∞ 高，Skia 巨幅绘制直接 OOM/卡死。
+        // Center 包裹的（Donut/Radar/Polar）在满宽容器内居中，效果不变。
+        auto box = cui::make_shared<Container>(e.second);
+        box->width(1e18);
+        tabPages.push_back(box);
     }
     auto tabs = cui::make_shared<Tabs>(labels, tabPages);
 
@@ -1964,7 +1975,10 @@ inline SharedPtr<Widget> pageFlChart() {
     auto col = cui::make_shared<Column>(std::vector<SharedPtr<Widget>>{
         cap, vgap(10.0), cui::make_shared<Expanded>(1, tabs)});
     col->setMainAxisSize(MainAxisSize::Max);
-    col->setCrossAxisAlignment(CrossAxisAlignment::Start);
+    // Stretch：TabBarView(IndexedStack) 给页面的是松宽度约束，Start 会让图表缩回
+    // 首选 360 宽；Stretch 把横轴抬到内容区满宽（图表的 CustomPaint 在紧约束下
+    // 自动撑满，绘制本就按实际尺寸走）。
+    col->setCrossAxisAlignment(CrossAxisAlignment::Stretch);
     auto c = cui::make_shared<Container>(col);
     c->padding(EdgeInsets::symmetric(12.0, 20.0));
     return c;
@@ -3135,7 +3149,7 @@ inline SharedPtr<Widget> pageChipsList() {
 
 inline SharedPtr<Widget> pageChrome() {
     auto titleBar = cui::make_shared<TitleBar>(
-        "gallery — 控件流水线", std::vector<std::string>{"—", "□", "×"}, 420.0);
+        "story — 控件流水线", std::vector<std::string>{"—", "□", "×"}, 420.0);
     auto toolbar = cui::make_shared<Toolbar>(std::vector<ToolbarItem>{
         {IconCode::Add, "新建"},
         {IconCode::Search, "打开"},
@@ -3497,8 +3511,125 @@ inline SharedPtr<Widget> pageShell() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// 页面：值输入（SpinBox / ButtonGroup）
+// 页面：值输入（SpinBox / ButtonGroup / Store）
 // ══════════════════════════════════════════════════════════════════════════════
+
+/// Store 的状态快照（值语义）。Property<State> 用 `!=` 判重，C++20 由默认 `==` 合成。
+struct StoreValueState {
+    int count = 0;
+    double step = 1.0;
+    int align = 1;
+    int dispatches = 0;
+    std::string lastAction = "Init";
+    bool operator==(const StoreValueState&) const = default;
+};
+
+/// 所有状态变更都用 Action 表达；View 不直接改 State。
+struct StoreInc {};
+struct StoreDec {};
+struct StoreReset {};
+struct StoreSetStep { double value = 1.0; };
+struct StoreSetAlign { int index = 0; };
+using StoreDemoAction = std::variant<StoreInc, StoreDec, StoreReset,
+                                     StoreSetStep, StoreSetAlign>;
+
+/// Reducer：纯函数，(旧 State, Action) → 新 State。
+inline StoreValueState reduceStoreValue(StoreValueState s, const StoreDemoAction& a) {
+    ++s.dispatches;
+    std::visit([&](auto&& act) {
+        using T = std::decay_t<decltype(act)>;
+        if constexpr (std::is_same_v<T, StoreInc>) {
+            s.count += static_cast<int>(s.step);
+            s.lastAction = "Increment";
+        } else if constexpr (std::is_same_v<T, StoreDec>) {
+            s.count -= static_cast<int>(s.step);
+            s.lastAction = "Decrement";
+        } else if constexpr (std::is_same_v<T, StoreReset>) {
+            // 只重置 count：step / align 由输入控件内部持有，重置它们会让控件
+            // 显示与 Store 不一致（受控值需要控件支持外部回写）。
+            s.count = 0;
+            s.lastAction = "Reset";
+        } else if constexpr (std::is_same_v<T, StoreSetStep>) {
+            s.step = act.value;
+            s.lastAction = "SetStep(" + std::to_string(static_cast<int>(act.value)) + ")";
+        } else {
+            s.align = act.index;
+            s.lastAction = "SetAlign(" + std::to_string(act.index) + ")";
+        }
+    }, a);
+    return s;
+}
+
+class StoreDemo : public StatefulWidget {
+public:
+    StoreDemo() = default;
+    std::unique_ptr<State> createState() override;
+    std::string toStringShort() const override { return "StoreDemo"; }
+};
+
+/// View：单向数据流 Store → Property.changed() → setState() → 重建。
+class StoreDemoState : public State {
+public:
+    void initState() override {
+        // subscribe 是 state().changed().connect 的便捷包装。Store 与本 State
+        // 同生命周期，无需保存 ConnectionId 去 disconnect。
+        store_.subscribe([this](const StoreValueState&) {
+            if (mounted()) setState();
+        });
+    }
+
+    SharedPtr<Widget> build(BuildContext&) override {
+        const auto& s = store_.currentState();
+        static const char* kAlignNames[] = {"左对齐", "居中", "右对齐"};
+        const int alignIdx = std::clamp(s.align, 0, 2);
+
+        auto value = cui::make_shared<Text>(
+            "count = " + std::to_string(s.count),
+            TextStyle().size(24.0).bold().fgColor(primaryColor()));
+        auto meta = caption("dispatch " + std::to_string(s.dispatches) +
+                            " 次 · 最近 Action: " + s.lastAction +
+                            " · step = " + std::to_string(static_cast<int>(s.step)) +
+                            " · " + kAlignNames[alignIdx]);
+
+        auto minus = cui::make_shared<OutlinedButton>(
+            cui::make_shared<Text>("− step"), [this] { store_.dispatch(StoreDec{}); });
+        auto plus = cui::make_shared<ElevatedButton>(
+            cui::make_shared<Text>("+ step"), [this] { store_.dispatch(StoreInc{}); });
+        auto reset = cui::make_shared<TextButton>(
+            cui::make_shared<Text>("重置 count"), [this] { store_.dispatch(StoreReset{}); });
+        auto buttons = hrow(std::vector<SharedPtr<Widget>>{
+            minus, cui::make_shared<SizedBox>(10.0, 0.0), plus,
+            cui::make_shared<SizedBox>(10.0, 0.0), reset});
+
+        // 值输入控件只发 Action，不自己持有真值（Store 是唯一真源）。
+        auto stepSpin = cui::make_shared<SpinBox>(
+            s.step, 1.0, 10.0, 1.0, 0,
+            [this](double v) { store_.dispatch(StoreSetStep{v}); });
+        auto alignGroup = cui::make_shared<ButtonGroup>(
+            std::vector<std::string>{"左对齐", "居中", "右对齐"}, s.align,
+            [this](int i) { store_.dispatch(StoreSetAlign{i}); });
+        auto inputs = hrow(std::vector<SharedPtr<Widget>>{
+            caption("步长"), cui::make_shared<SizedBox>(8.0, 0.0), stepSpin,
+            cui::make_shared<SizedBox>(20.0, 0.0), caption("对齐"),
+            cui::make_shared<SizedBox>(8.0, 0.0), alignGroup});
+
+        auto col = vcol(std::vector<SharedPtr<Widget>>{
+            value, vgap(6.0), meta, vgap(12.0), buttons, vgap(12.0), inputs,
+            vgap(8.0),
+            caption("改状态只能 dispatch：View → reducer → Property.changed() → setState()。")});
+        auto card = cui::make_shared<Container>(col);
+        card->padding(EdgeInsets::all(12.0))
+            .decoration(BoxDecoration{Color::fromRGBA(0.0, 0.45, 0.95, 0.08), 8.0});
+        return card;
+    }
+
+private:
+    cui::Store<StoreValueState, StoreDemoAction> store_{StoreValueState{}, reduceStoreValue};
+};
+
+inline std::unique_ptr<State> StoreDemo::createState() {
+    return std::make_unique<StoreDemoState>();
+}
 
 inline SharedPtr<Widget> pageValueInput() {
     auto intSpin = cui::make_shared<SpinBox>(3.0, 0.0, 10.0, 1.0, 0);
@@ -3515,6 +3646,10 @@ inline SharedPtr<Widget> pageValueInput() {
         sectionTitle("ButtonGroup"),
         caption("互斥按钮组：点击切换选中项。"),
         vgap(8.0), group,
+        vgap(24.0),
+        sectionTitle("Store（MVI · 单向数据流）"),
+        caption("Store<State, Action> 是唯一真源：输入控件只 dispatch(Action)，reducer 产出新 State。"),
+        vgap(8.0), cui::make_shared<StoreDemo>(),
         vgap(40.0),
     });
 }
@@ -5108,7 +5243,7 @@ inline SharedPtr<Widget> pageTabBar() {
         sectionTitle("TabBar / TabBarView（Flutter）"),
         caption("对齐上游 material/tabs.dart：TabController 持有 index 并向 TabBar / "
                 "TabBarView 广播，两个控件各自订阅重建。"),
-        caption("这是 gallery 里此前唯一没有单独演示的 Flutter 控件族；"
+        caption("这是 story 里此前唯一没有单独演示的 Flutter 控件族；"
                 "TabBarView 用 IndexedStack 只显示当前页。"),
         vgap(12.0),
         cui::make_shared<TabBarDemo>(),
@@ -5449,7 +5584,7 @@ private:
 
     SharedPtr<Widget> sourcePage() {
         auto* self = this;
-        auto avatar = cui::make_shared<Hero>("gallery-avatar", heroAvatar(64.0, 14.0));
+        auto avatar = cui::make_shared<Hero>("story-avatar", heroAvatar(64.0, 14.0));
         std::vector<SharedPtr<Widget>> textKids;
         textKids.push_back(cui::make_shared<Text>("Alice", TextStyle().size(15.0).bold()));
         textKids.push_back(caption("点「打开详情页」，同一 tag 的 Hero 会飞出去"));
@@ -5482,7 +5617,7 @@ private:
             caption("同一个 tag 的 Hero 在这里放大到 160×160；返回时反向飞回列表。"
                     "飞行途中再点返回会 divert（同一条飞行换车），不会重开一条。"),
             vgap(18.0),
-            cui::make_shared<Hero>("gallery-avatar", heroAvatar(160.0, 28.0)),
+            cui::make_shared<Hero>("story-avatar", heroAvatar(160.0, 28.0)),
             vgap(18.0),
             cui::make_shared<ElevatedButton>(cui::make_shared<Text>("返回列表"),
                                              [self] { self->popDetail(); }),
@@ -6178,7 +6313,7 @@ inline std::string exportPath(const char* tag) {
 
 }  // namespace image_studio_detail
 
-using namespace image_studio_detail;  // 只在 gallery 内部这一个小节用
+using namespace image_studio_detail;  // 只在 story 内部这一个小节用
 
 class ImageStudioDemo : public StatefulWidget {
 public:
@@ -6252,9 +6387,9 @@ private:
     std::shared_ptr<ImageProvider> makeProvider() {
         if (badSource_) {
             const std::vector<uint8_t> junk{'n', 'o', 't', ' ', 'a', 'n', ' ', 'p', 'n', 'g'};
-            return std::make_shared<MemoryImageProvider>(junk, "gallery-broken");
+            return std::make_shared<MemoryImageProvider>(junk, "story-broken");
         }
-        std::string name = "gallery-stock";
+        std::string name = "story-stock";
         if (reloadNonce_ > 0)
             name += "#" + std::to_string(reloadNonce_);
         return std::make_shared<MemoryImageProvider>(stock().bytes, std::move(name));
@@ -6348,7 +6483,7 @@ private:
     SharedPtr<Widget> viewerSection() {
         auto* self = this;
         auto content = cui::make_shared<ExtendedImage>(
-            std::make_shared<DecodedImageProvider>(stock().image, "gallery-viewer"),
+            std::make_shared<DecodedImageProvider>(stock().image, "story-viewer"),
             BoxFit::Cover);
         auto viewer = cui::make_shared<InteractiveViewer>(
             std::move(content), Clip::AntiAlias, PanAxis::Free, EdgeInsets::all(20.0), true,
@@ -6385,7 +6520,7 @@ private:
 
     SharedPtr<Widget> photoSection() {
         auto* self = this;
-        auto box = PhotoView::decoded(stock().image, "gallery-photo-box");
+        auto box = PhotoView::decoded(stock().image, "story-photo-box");
         box->setOnTapUp(
             [self](const PhotoViewTapDetails&) {
                 ++self->photoTaps_;
@@ -6399,7 +6534,7 @@ private:
                 if (!ns)
                     return;
                 auto page = cui::make_shared<PhotoViewSlidePage>(
-                    PhotoView::decoded(stock().image, "gallery-photo-full"));
+                    PhotoView::decoded(stock().image, "story-photo-full"));
                 ns->push(makePhotoViewSlideRoute(std::move(page)));
             });
 
@@ -6440,7 +6575,7 @@ private:
         ImageEditorConfig config;
         config.cropAspectRatio = editorRatio_;
         auto editor = cui::make_shared<ImageEditor>(
-            std::make_shared<DecodedImageProvider>(stock().image, "gallery-editor"), config,
+            std::make_shared<DecodedImageProvider>(stock().image, "story-editor"), config,
             nullptr, loadingPlaceholder, errorPlaceholder,
             ImageEditor::EditChangedCallback{}, editorKey_);
 
@@ -6495,7 +6630,7 @@ private:
                 200.0, 130.0,
                 cui::make_shared<ExtendedImage>(
                     std::make_shared<DecodedImageProvider>(
-                        editorPreview_, "gallery-editor-out#" + std::to_string(editorPreviewNonce_)),
+                        editorPreview_, "story-editor-out#" + std::to_string(editorPreviewNonce_)),
                     BoxFit::Contain, Alignment::center(), 200.0, 130.0));
         }
 
@@ -6553,7 +6688,7 @@ private:
     SharedPtr<Widget> painterSection() {
         auto* self = this;
         auto content = cui::make_shared<ExtendedImage>(
-            std::make_shared<DecodedImageProvider>(stock().image, "gallery-painter"), BoxFit::Cover);
+            std::make_shared<DecodedImageProvider>(stock().image, "story-painter"), BoxFit::Cover);
         auto layer = cui::make_shared<ImagePainterLayer>(
             std::move(content), painterCtrl_, painterMode_, painterColor_, painterWidth_, 2.0,
             [self](const ImagePainterStroke&) { self->setState(); }, painterKey_);
@@ -6614,7 +6749,7 @@ private:
                 200.0, 130.0,
                 cui::make_shared<ExtendedImage>(
                     std::make_shared<DecodedImageProvider>(
-                        painterPreview_, "gallery-painter-out#" + std::to_string(painterPreviewNonce_)),
+                        painterPreview_, "story-painter-out#" + std::to_string(painterPreviewNonce_)),
                     BoxFit::Contain, Alignment::center(), 200.0, 130.0));
         }
 
@@ -7173,6 +7308,27 @@ inline SharedPtr<Widget> pageMultiWindow() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
+// 真正的虚拟列表：100 万行，零逐行节点
+// ══════════════════════════════════════════════════════════════════════════════
+
+inline SharedPtr<Widget> pageVirtualList() {
+    auto model = cui::make_shared<cui::FixedListModel>(
+        1'000'000u, 26.0, [](std::size_t i) {
+            return "  Row " + std::to_string(i + 1) + "  ·  虚拟列表第 " +
+                   std::to_string(i + 1) + " 行";
+        });
+    auto list = cui::make_shared<cui::VirtualList>(model);
+    auto sized = cui::make_shared<cui::Container>(list);
+    sized->width(460.0).height(300.0);
+    return pageBody({
+        sectionTitle("Virtual List"),
+        caption("1,000,000 行 · 零逐行节点 · 滚轮 / 拖动滚动条 / 点击选中"),
+        vgap(8.0),
+        sized,
+    });
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
 // 壳：标题栏 + 侧边栏 + 内容区 + 状态条
 // ══════════════════════════════════════════════════════════════════════════════
 
@@ -7189,7 +7345,7 @@ public:
     std::unique_ptr<State> createState() override;
     std::string toStringShort() const override { return "GalleryShell"; }
 
-    /// 页面注册表（静态，壳的 State 读取）。分组沿用原 gallery 的
+    /// 页面注册表（静态，壳的 State 读取）。分组沿用原 story 的
     /// Demos / Basics / Data Display / Layout / Navigation / Feedback / Advanced。
     static const std::vector<Entry>& pages() {
         static const std::vector<Entry> kPages = {
@@ -7226,6 +7382,7 @@ public:
             {"Layout", "滚动+", IconCode::ArrowUpward,
              [] { return cui::make_shared<ScrollAdvPage>(); }},
             {"Layout", "下拉刷新", IconCode::Refresh, pageRefresh},
+            {"Layout", "Virtual List", IconCode::List, pageVirtualList},
             {"Navigation", "导航", IconCode::Menu, pageNav},
             {"Navigation", "导航2", IconCode::Radio, pageNav2},
             {"Navigation", "TabBar", IconCode::List, pageTabBar},
@@ -7653,11 +7810,11 @@ public:
         sel_ = cui::make_shared<GallerySelection>();
         outputText_ = buildOutput();
 
-        // 两个 gallery 面板用稳定的 ValueKey，dock 重建时可复用 State（而非重建）。
+        // 两个 story 面板用稳定的 ValueKey，dock 重建时可复用 State（而非重建）。
         auto contentPanel = cui::make_shared<GalleryContentPanel>(
-            sel_, cui::make_shared<ValueKey<std::string>>("gallery-content"));
+            sel_, cui::make_shared<ValueKey<std::string>>("story-content"));
         auto pagesPanel = cui::make_shared<GalleryPagesPanel>(
-            sel_, cui::make_shared<ValueKey<std::string>>("gallery-pages"));
+            sel_, cui::make_shared<ValueKey<std::string>>("story-pages"));
 
         docks_ = {
             makePanel({"content", tr("页面"), tr("页面"), "",
@@ -7765,7 +7922,7 @@ public:
             Docking::bringToFront("output");
         };
 
-        // ── 菜单（合并 gallery 主题/语言入口 + IDE 外壳）──────────────────
+        // ── 菜单（合并 story 主题/语言入口 + IDE 外壳）──────────────────
         static const char* kThemeKeys[] = {"light",   "dark",     "ocean",
                                            "forest",  "skyblue",  "orange",
                                            "lavender", "ide"};
@@ -8124,7 +8281,7 @@ private:
             else if (item == 3)
                 toggleGlass();
         }
-        std::fprintf(stderr, "[gallery] menu %d/%d\n", menu, item);
+        std::fprintf(stderr, "[story] menu %d/%d\n", menu, item);
     }
 
     int selected_ = 0;
@@ -8204,11 +8361,11 @@ std::unique_ptr<State> GalleryShell::createState() {
     return std::make_unique<GalleryShellState>();
 }
 
-}  // namespace gallery
+}  // namespace story
 }  // namespace cui_core
 
 // ── makeGalleryShell：从 gallery_host.cpp 迁移过来。
-//    实现需要 gallery::GalleryShell（以及 Overlay / Column / Text 等）的
+//    实现需要 story::GalleryShell（以及 Overlay / Column / Text 等）的
 //    完整定义，而这些现在只在本 .cpp 内可见（薄头文件不再暴露它们），
 //    故把该工厂函数的定义放在这里最合适。
 namespace cui {
@@ -8225,7 +8382,7 @@ SharedPtr<Widget> makeGalleryShell() {
     // 找不到 Overlay 会抛 "No Overlay widget found"。这里把 shell 作为唯一条目
     // 挂进去。shell 实例被捕获进 entry builder ⇒ Overlay 因弹层 insert/remove
     // 重建时返回同一个 widget，Element/State 复用，不会重置外壳状态。
-    auto shell = cui::make_shared<gallery::GalleryShell>();
+    auto shell = cui::make_shared<story::GalleryShell>();
     auto entry = cui::make_shared<OverlayEntry>(
         [shell](BuildContext&) { return shell; }, /*opaque=*/true, /*maintainState=*/true);
     return cui::make_shared<Overlay>(std::vector{std::move(entry)});

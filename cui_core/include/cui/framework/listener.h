@@ -13,7 +13,7 @@
 
 #include <functional>
 
-#include "cui/foundation/shared_ptr.h"
+#include "../utils/shared_ptr.h"
 #include "cui/rendering/render_box.h"
 #include "framework.h"
 #include "render_object_widget.h"

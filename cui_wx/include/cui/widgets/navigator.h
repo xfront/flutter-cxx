@@ -42,9 +42,9 @@
 #include <typeindex>
 #include <vector>
 
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/change_notifier.h"
-#include "cui/foundation/shared_ptr.h"
+#include "cui/framework/framework.h"
 #include "cui/widgets/overlay.h"
 
 namespace cui {

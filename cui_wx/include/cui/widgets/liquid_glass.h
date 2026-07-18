@@ -18,14 +18,14 @@
 #include <functional>
 #include <memory>
 
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/geometry.h"
-#include "cui/foundation/shared_ptr.h"
+#include "cui/framework/framework.h"
+#include "cui/framework/render_object_widget.h"
 #include "cui/rendering/painting_context.h"
 #include "cui/widgets/animation/animation.h"
 #include "cui/widgets/animation/shared_animation.h"
 #include "cui/widgets/basic.h"
-#include "cui/framework/render_object_widget.h"
 
 namespace cui {
 

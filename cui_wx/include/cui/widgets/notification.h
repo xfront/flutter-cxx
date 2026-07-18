@@ -30,9 +30,9 @@
 #include <string>
 #include <utility>
 
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/framework/element.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/shared_ptr.h"
 
 namespace cui {
 

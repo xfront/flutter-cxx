@@ -2,7 +2,8 @@
 /// @brief interactive.h 中 >6 行函数体的实现（受控控件 + 按钮）。
 
 #include "cui/widgets/interactive.h"
-#include "cui/foundation/shared_ptr.h"
+
+#include "../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/widgets/text.h"
 
 namespace cui {

@@ -6,10 +6,10 @@
 #include <cstdio>
 #include <queue>
 
+#include "../../../cui_core/include/cui/utils/shared_ptr.h"
+#include "cui/framework/listener.h"
 #include "cui/widgets/animation/shared_animation.h"
 #include "cui/widgets/paint.h"  // CustomPaint
-#include "cui/framework/listener.h"
-#include "cui/foundation/shared_ptr.h"
 
 namespace cui {
 namespace chart {
@@ -405,11 +405,17 @@ public:
         auto size = w->size();
         auto self = this;
         auto painter = [self, paint](Painter& p, const Size& s) {
+            // 记录实际渲染尺寸：图表被拉伸（紧约束）时渲染尺寸 ≠ 首选尺寸，
+            // 指针命中要按比例缩回首选坐标系（hit 闭包捕获的是首选尺寸）。
+            self->lastW_ = s.width;
+            self->lastH_ = s.height;
             double prog = self->anim_ ? self->anim_->value() : 0.0;
             paint(p, s, self->touch_, prog);
         };
-        auto onMove = [self, hit](const PointerEvent& e) {
-            self->updateTouch(hit(e.position.dx, e.position.dy));
+        auto onMove = [self, hit, size](const PointerEvent& e) {
+            double sx = self->lastW_ > 0.0 ? size.width / self->lastW_ : 1.0;
+            double sy = self->lastH_ > 0.0 ? size.height / self->lastH_ : 1.0;
+            self->updateTouch(hit(e.position.dx * sx, e.position.dy * sy));
         };
         auto onLeave = [self](const PointerEvent&) { self->updateTouch(ChartTouch{}); };
         return cui::make_shared<Listener>(
@@ -418,6 +424,7 @@ public:
             nullptr, onLeave);
     }
     ChartTouch touch_;
+    double lastW_ = 0.0, lastH_ = 0.0;  ///< 最近一次绘制的实际渲染尺寸
     SharedPtr<SharedAnimation> anim_;
     int32_t listenerId_ = 0;
 };

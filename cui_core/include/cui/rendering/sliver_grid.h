@@ -31,8 +31,8 @@
 #include <memory>
 #include <optional>
 
+#include "../utils/shared_ptr.h"
 #include "cui/rendering/sliver.h"
-#include "cui/foundation/shared_ptr.h"
 
 namespace cui {
 

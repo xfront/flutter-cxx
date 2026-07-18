@@ -58,7 +58,7 @@
 #include <typeindex>
 #include <vector>
 
-#include "cui/foundation/shared_ptr.h"
+#include "../utils/shared_ptr.h"
 #include "framework.h"
 
 namespace cui {

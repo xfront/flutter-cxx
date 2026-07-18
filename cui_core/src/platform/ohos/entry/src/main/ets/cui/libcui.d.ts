@@ -1,9 +1,9 @@
 /**
- * Type declarations for the cui_core native module (`libcui.so`).
+ * Type declarations for the cui_core native module (`libcui_core.so`).
  *
  * The library registers a NAPI module named "cui_core" (see
  * src/platform/services/ohos_channel.cpp), so ArkTS imports it as
- * `import cui_core from 'libcui.so'`.
+ * `import cui_core from 'libcui_core.so'`.
  */
 
 export type CuiMethodDispatcher = (channel: string, method: string, args: string) => string;

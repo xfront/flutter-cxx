@@ -2,7 +2,7 @@
 /// @brief video_player 控件族回归：controller 状态机 + 三个控件。
 ///
 /// 素材是运行时合成的 MJPEG-in-AVI（160×90 / 10 fps / 5 帧），走真实原生
-/// 后端（Windows Media Foundation / Linux FFmpeg），和 gallery 页同一条路径。
+/// 后端（Windows Media Foundation / Linux FFmpeg），和 story 页同一条路径。
 /// 无 Application 时 `initialize()` 同步打开，Ticker 由测试手动泵。
 ///
 /// 因为全份都依赖一个真能解容器的后端，两条编译开关都关时（`-DCUI_VIDEO_SYS=OFF
@@ -47,13 +47,13 @@
 #include <utility>
 #include <vector>
 
+#include "../cui_core/include/cui/utils/shared_ptr.h"
 #include "../examples/video_demo.h"
+#include "cui/foundation/events.h"
+#include "cui/foundation/ticker.h"
 #include "cui/framework/build_owner.h"
 #include "cui/framework/element.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/events.h"
-#include "cui/foundation/shared_ptr.h"
-#include "cui/foundation/ticker.h"
 #include "cui/rendering/render_box_widgets.h"
 #include "cui/rendering/render_flex.h"
 #include "cui/rendering/render_icon.h"
@@ -95,7 +95,7 @@ std::vector<uint8_t> makeTestVideo(int frames) {
     std::vector<std::vector<uint8_t>> jpegs;
     jpegs.reserve(size_t(frames));
     for (int i = 0; i < frames; ++i) {
-        auto image = gallery::video_demo::renderDemoFrame(i, frames, kWidth, kHeight);
+        auto image = story::video_demo::renderDemoFrame(i, frames, kWidth, kHeight);
         if (!image)
             return {};
         SkJpegEncoder::Options options;
@@ -106,7 +106,7 @@ std::vector<uint8_t> makeTestVideo(int frames) {
         const auto* raw = static_cast<const uint8_t*>(data->data());
         jpegs.emplace_back(raw, raw + data->size());
     }
-    return gallery::video_demo::buildMjpegAvi(jpegs, kWidth, kHeight, kFps);
+    return story::video_demo::buildMjpegAvi(jpegs, kWidth, kHeight, kFps);
 }
 
 /// 与 `makeTestVideo` 同一套画面，但容器里多一条 `seconds` 秒的立体声 PCM
@@ -117,7 +117,7 @@ std::vector<uint8_t> makeTestVideoWithAudio(int frames, int seconds) {
     std::vector<std::vector<uint8_t>> jpegs;
     jpegs.reserve(size_t(frames));
     for (int i = 0; i < frames; ++i) {
-        auto image = gallery::video_demo::renderDemoFrame(i, frames, kWidth, kHeight);
+        auto image = story::video_demo::renderDemoFrame(i, frames, kWidth, kHeight);
         if (!image)
             return {};
         SkJpegEncoder::Options options;
@@ -128,9 +128,9 @@ std::vector<uint8_t> makeTestVideoWithAudio(int frames, int seconds) {
         const auto* raw = static_cast<const uint8_t*>(data->data());
         jpegs.emplace_back(raw, raw + data->size());
     }
-    return gallery::video_demo::buildMjpegAvi(
+    return story::video_demo::buildMjpegAvi(
             jpegs, kWidth, kHeight, kFps,
-            gallery::video_demo::buildDemoAudio(kAudioRate, kAudioChannels, seconds));
+            story::video_demo::buildDemoAudio(kAudioRate, kAudioChannels, seconds));
 }
 
 /// 手动泵帧：无 SchedulerBinding 时 Ticker 只靠这个入口推进。
@@ -344,7 +344,7 @@ void testPlayFromEnd() {
     c->dispose();
 }
 
-// ── 5b：自然播完再 play（gallery「播完后无法再播」回归） ────────────────────
+// ── 5b：自然播完再 play（story「播完后无法再播」回归） ────────────────────
 
 void testPlayAfterNaturalEnd() {
     std::printf("--- 5b: 自然播完再 play ---\n");
@@ -697,7 +697,7 @@ void testControlsHitTest() {
     c->dispose();
 }
 
-// ── 12：叠在画面底部的控制条（gallery 页的包法）────────────────────────
+// ── 12：叠在画面底部的控制条（story 页的包法）────────────────────────
 
 void testOverlayControls() {
     std::printf("--- 12: 叠放模式贴画面底部且可点击 ---\n");
@@ -712,7 +712,7 @@ void testOverlayControls() {
         return;
     }
 
-    // gallery 页同构：`AspectRatio` 定出画面盒子（约束 600×300、比例 2 ⇒ 600×300），
+    // story 页同构：`AspectRatio` 定出画面盒子（约束 600×300、比例 2 ⇒ 600×300），
     // `Stack` 用 `Fit::Expand` 把画面撑满盒子，控制条用
     // `Positioned(left+right+bottom = 0)` 贴在底边，外面还套着淡入淡出与
     // IgnorePointer 两层（收起时不吃点击）。
@@ -802,7 +802,7 @@ void testStageTapPrecedence() {
     constexpr double kBoxW = 600.0;
     constexpr double kBoxH = 300.0;
 
-    // 把 gallery 页 onStageTap() 的形状直接复刻到测试里：计数 + toggle。
+    // 把 story 页 onStageTap() 的形状直接复刻到测试里：计数 + toggle。
     // 本仓没有手势竞技场，「点控制条不会连带触发画面」完全靠 Stack 的
     // 倒序命中 + 「第一个命中就停」，所以这条必须钉住。
     int stageTaps = 0;

@@ -50,12 +50,12 @@
 #if defined(__APPLE__)
 #include <TargetConditionals.h>  // TARGET_OS_IPHONE（iOS 判定）
 #endif
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/framework/build_owner.h"  // BuildOwner::focusManager() 键盘滚动
 #include "cui/framework/focus.h"        // FocusNode / KeyEvent
-#include "cui/foundation/shared_ptr.h"
-#include "cui/widgets/grid.h"  // SliverGrid + 两族 SliverGridDelegate（GridView）
+#include "cui/framework/framework.h"
 #include "cui/framework/listener.h"
+#include "cui/widgets/grid.h"                 // SliverGrid + 两族 SliverGridDelegate（GridView）
 #include "cui/widgets/notification.h"         // Notification 冒泡
 #include "cui/widgets/scroll_notification.h"  // ScrollNotification 家族
 #include "cui/widgets/scroll_physics.h"

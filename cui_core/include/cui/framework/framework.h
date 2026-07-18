@@ -28,9 +28,9 @@
 #include <typeindex>
 #include <vector>
 
+#include "../utils/shared_ptr.h"
 #include "cui/foundation/key.h"
 #include "cui/rendering/render_object.h"
-#include "cui/foundation/shared_ptr.h"
 
 namespace cui {
 

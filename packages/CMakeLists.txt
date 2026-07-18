@@ -1,5 +1,5 @@
 # ── cui_core 独立控件包 ───────────────────────────────────────────────────────────
-# `flutter/` 是 Widget / Element / RenderObject 三层引擎本体；这里放「按控件族
+# `cui_wx/` 是 Widget / Element / RenderObject 三层引擎本体；这里放「按控件族
 # 切出来」的独立包。每个包自带 include/ 与 src/，对外只暴露自己那一层头：
 #
 #   cui_core/charts/chart.h            图表（Line / Bar / Pie / Scatter / Radar…）

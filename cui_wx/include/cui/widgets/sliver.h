@@ -49,14 +49,14 @@
 #include <utility>
 #include <vector>
 
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
+#include "cui/foundation/geometry.h"
 #include "cui/framework/element.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/geometry.h"
-#include "cui/foundation/shared_ptr.h"
+#include "cui/framework/render_object_widget.h"
 #include "cui/rendering/render_scroll.h"  // ScrollController
 #include "cui/rendering/sliver.h"
 #include "cui/widgets/notification.h"
-#include "cui/framework/render_object_widget.h"
 
 namespace cui {
 

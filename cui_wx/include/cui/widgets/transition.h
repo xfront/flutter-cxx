@@ -36,11 +36,11 @@
 #include <memory>
 #include <optional>
 
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/change_notifier.h"
 #include "cui/foundation/geometry.h"
 #include "cui/foundation/matrix4.h"
-#include "cui/foundation/shared_ptr.h"
+#include "cui/framework/framework.h"
 #include "cui/reactive/observable.h"
 #include "cui/rendering/render_flex.h"
 #include "cui/widgets/animation/animation.h"

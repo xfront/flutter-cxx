@@ -630,17 +630,17 @@ endfunction()
 function(cui_report_libs dir)
     cui_step("产物")
     cui_info("构建目录: ${dir}")
-    # 引擎拆成 cui_core-core / cui_core-wx 两个库，控件包各自成库。
+    # 引擎拆成 cui_core / cui_wx 两个库，控件包各自成库。
     # 本仓产物统一落在 dist/（默认源码根，即构建目录的上一级）；
     # 旧的构建树路径只作为 -DCUI_DIST_DIR 指向别处时的兼容兜底。
     file(GLOB _libs
-        "${dir}/../dist/libcui-core.*" "${dir}/../dist/libcui-wx.*"
-        "${dir}/../dist/cui_core-core.*" "${dir}/../dist/cui_core-wx.*"
+        "${dir}/../dist/libcui_core.*" "${dir}/../dist/libcui_wx.*"
+        "${dir}/../dist/cui_core.*" "${dir}/../dist/cui_wx.*"
         "${dir}/../dist/libcui_*.*" "${dir}/../dist/cui_*.*"
         "${dir}/../dist/libskia.so*" "${dir}/../dist/libav*.so*"
         "${dir}/../dist/libsw*.so*"
-        "${dir}/flutter/libcui-core.*" "${dir}/flutter/libcui-wx.*"
-        "${dir}/flutter/cui_core-core.*" "${dir}/flutter/cui_core-wx.*"
+        "${dir}/cui_core/libcui_core.*" "${dir}/cui_wx/libcui_wx.*"
+        "${dir}/cui_core/cui_core.*" "${dir}/cui_wx/cui_wx.*"
         "${dir}/packages/*/libcui_*.*" "${dir}/packages/*/cui_*.*")
     list(SORT _libs)
     if(_libs)

@@ -62,7 +62,7 @@ namespace {
 //
 // 为什么不用 `emscripten::val`：本项目按默认配置编（`-fignore-exceptions`，
 // 链接期没有真正的异常），而仓库里既有的 wasm 互操作一律是「原始 JS 块 +
-// Module 上的状态表」（先例：flutter/src/platform/web_window.cpp 的
+// Module 上的状态表」（先例：cui_core/src/platform/web_window.cpp 的
 // `canvas.__cuiHooks` 幂等守卫）。这里沿用同一套形状：所有状态放在
 // `Module['__cuiVideo'].states[id]`，C++ 只握一个整数 id。
 //
@@ -341,7 +341,10 @@ public:
                 var el = st.el;
                 // 64 位微秒拆两个 32 位过界（EM_ASM 参数只能是整数），
                 // `>>> 0` 把可能被当负数传过来的低半字补回无符号。
-                var sec = (($2 >>> 0) * 4294967296 + ($3 >>> 0)) / 1000000.0;
+                // 只传了三个参数（$0=id, $1=high, $2=low）：$3 不存在，
+                // 误读它会让 sec 变成 low/1e6（或 NaN）⇒ 拖进度条跳到 0 附近，
+                // 甚至抛 InvalidStateError 后卡在 seekPending（画面不再刷新）。
+                var sec = (($1 >>> 0) * 4294967296 + ($2 >>> 0)) / 1000000.0;
                 st.seekPending = true;
                 if (el.readyState < 1) {
                     // 元数据之前设 currentTime 会被忽略甚至抛 InvalidStateError

@@ -3,14 +3,14 @@
 # 依赖方向：本目录（应用层）→ cui_core / packages（引擎层）。引擎侧的库与源码都不
 # include 这里的头、也不编这里的源码。
 #
-# 这里只持有 **gallery 专属**的部分：控件树（gallery_shell / gallery_dock）、
+# 这里只持有 **story 专属**的部分：控件树（gallery_shell / gallery_dock）、
 # 桌面入口、以及 cui_core::createAppRoot() 的实现（app_root.cpp）。
-# 平台宿主的实现尽可能留在 flutter/src/platform/{android,ohos}/：入口 cpp、
+# 平台宿主的实现尽可能留在 cui_core/src/platform/{android,ohos}/：入口 cpp、
 # Java / ArkTS 平台服务桥、HAP 工程骨架全在那里，由引擎层持有；它们只依赖
-# 引擎头声明的注入接口，不认识 gallery。Android 的 app 身份资产（Manifest、
-# GalleryActivity）与 gallery 控件树一起归 examples/platform/android/。
+# 引擎头声明的注入接口，不认识 story。Android 的 app 身份资产（Manifest、
+# GalleryActivity）与 story 控件树一起归 examples/platform/android/。
 #
-# 但 **app 产物的构建定义**在本文件（应用层）：桌面 demo_gallery、
+# 但 **app 产物的构建定义**在本文件（应用层）：桌面 story、
 # android libcui_gallery.so、ohos libcui.so。引擎目录不再有 CMakeLists 去编译
 # app 目标 —— 目标在哪定义，就意味着谁拥有这个产物。
 #
@@ -21,27 +21,27 @@ set(CUI_APP_LIBS cui_core cui_charts cui_code_editor cui_video cui_dock)
 
 add_library(cui_app_root OBJECT
     app_root.cpp
-    gallery_shell.cpp
-    gallery_dock.cpp)
+        story_shell.cpp
+        story_dock.cpp)
 set_target_properties(cui_app_root PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_include_directories(cui_app_root PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(cui_app_root PRIVATE ${CUI_APP_LIBS})
 
-# ── 桌面 demo_gallery ───────────────────────────────────────────────────────
+# ── 桌面 story ───────────────────────────────────────────────────────
 # 与平台宿主共用同一个 cui_app_root，入口 main() 同样走 createAppRoot()。
 # WIN32 → /subsystem:windows，运行时不附带控制台窗口；非 Windows 平台忽略。
 # 入口仍是 main()，MSVC 下用 /ENTRY:mainCRTStartup 指回 CRT 的 main 启动桩。
 if(CUI_BUILD_EXAMPLES)
-    add_executable(demo_gallery WIN32 gallery.cpp)
-    target_link_libraries(demo_gallery PRIVATE cui_app_root ${CUI_APP_LIBS})
+    add_executable(story WIN32 story.cpp)
+    target_link_libraries(story PRIVATE cui_app_root ${CUI_APP_LIBS})
     if(MSVC)
-        target_link_options(demo_gallery PRIVATE /ENTRY:mainCRTStartup)
+        target_link_options(story PRIVATE /ENTRY:mainCRTStartup)
     endif()
 endif()
 
 # ── Android：libcui_gallery.so ──────────────────────────────────────────────
 # Android 上不做多 .so 拆分（NativeActivity 只 load 一个 lib_name），引擎、
-# 控件包、应用根都链进这一个 .so。宿主入口 cpp 在 flutter/src/platform/android/cpp，
+# 控件包、应用根都链进这一个 .so。宿主入口 cpp 在 cui_core/src/platform/android/cpp，
 # 是平台实现（只依赖 cui_core/framework/app_root.h），由本文件（应用层）编译。
 if(CUI_PLATFORM STREQUAL "android" AND CUI_BUILD_ANDROID_APP)
     # glue 是纯 C 源，根 project() 只声明了 CXX，需补语言才能推断链接语言。
@@ -55,7 +55,7 @@ if(CUI_PLATFORM STREQUAL "android" AND CUI_BUILD_ANDROID_APP)
     target_include_directories(cui_native_app_glue PUBLIC "${CUI_APP_GLUE_DIR}")
     target_link_libraries(cui_native_app_glue PUBLIC android log)
 
-    set(CUI_ANDROID_HOST_DIR "${CMAKE_SOURCE_DIR}/flutter/src/platform/android")
+    set(CUI_ANDROID_HOST_DIR "${CMAKE_SOURCE_DIR}/cui_core/src/platform/android")
     add_library(cui_gallery SHARED "${CUI_ANDROID_HOST_DIR}/cpp/main.cpp")
     target_include_directories(cui_gallery PRIVATE "${CUI_ANDROID_HOST_DIR}/cpp")
     target_link_libraries(cui_gallery PRIVATE
@@ -79,7 +79,7 @@ endif()
 # 「构造器不能丢」写成显式约定；-z defs 让未定义符号在链接期就暴露（dlopen
 # 时才会报 undefined symbol，装机后更难查）。
 if(CUI_PLATFORM STREQUAL "ohos" AND CUI_BUILD_OHOS_APP)
-    set(CUI_OHOS_HOST_DIR "${CMAKE_SOURCE_DIR}/flutter/src/platform/ohos")
+    set(CUI_OHOS_HOST_DIR "${CMAKE_SOURCE_DIR}/cui_core/src/platform/ohos")
     add_library(cui_ohos_host SHARED "${CUI_OHOS_HOST_DIR}/cpp/main.cpp")
     set_target_properties(cui_ohos_host PROPERTIES OUTPUT_NAME "cui_core")
     target_include_directories(cui_ohos_host PRIVATE "${CUI_OHOS_HOST_DIR}/cpp")

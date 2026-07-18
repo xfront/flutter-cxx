@@ -16,9 +16,9 @@
 #include <memory>
 #include <string>
 
+#include "../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/geometry.h"
 #include "cui/framework/focus.h"
-#include "cui/foundation/shared_ptr.h"
 
 namespace cui {
 namespace designer {

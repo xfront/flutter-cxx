@@ -6,8 +6,8 @@
 #include <algorithm>
 #include <numeric>
 
+#include "../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/painter.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/theme.h"
 #include "cui/widgets/implicit_animation.h"
 

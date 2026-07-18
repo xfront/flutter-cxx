@@ -65,6 +65,10 @@ target_link_libraries(test_material3 PRIVATE cui)
 add_executable(test_scroll2 test_scroll2.cpp)
 target_link_libraries(test_scroll2 PRIVATE cui)
 
+# 真正虚拟列表（零逐行节点 / 惰性前缀和 / 可见区绘制）单元测试
+add_executable(test_virtual_list test_virtual_list.cpp)
+target_link_libraries(test_virtual_list PRIVATE cui)
+
 # 弹层组件（Dialog / AlertDialog / SimpleDialog / PopupMenuButton）单元测试
 add_executable(test_popup test_popup.cpp)
 target_link_libraries(test_popup PRIVATE cui)
@@ -177,6 +181,7 @@ add_test(NAME test_scroll COMMAND test_scroll)
 add_test(NAME test_material2 COMMAND test_material2)
 add_test(NAME test_material3 COMMAND test_material3)
 add_test(NAME test_scroll2 COMMAND test_scroll2)
+add_test(NAME test_virtual_list COMMAND test_virtual_list)
 add_test(NAME test_popup COMMAND test_popup)
 add_test(NAME test_text_input COMMAND test_text_input)
 add_test(NAME test_tabs COMMAND test_tabs)
@@ -346,7 +351,7 @@ if(CUI_SANITIZE_ADDRESS)
                          test_animation test_async test_widgets test_layout
                          test_text test_material test_interactive
                          test_scroll test_material2
-                         test_material3 test_scroll2
+                         test_material3 test_scroll2 test_virtual_list
                          test_popup test_text_input test_tabs
                          test_lifecycle test_transition test_dock
                          test_implicit_animation test_sliver

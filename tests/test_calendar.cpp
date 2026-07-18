@@ -12,18 +12,18 @@
 #include <typeinfo>
 #include <vector>
 
+#include "../cui_core/include/cui/utils/shared_ptr.h"
+#include "cui/foundation/events.h"
 #include "cui/framework/build_owner.h"
 #include "cui/framework/element.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/events.h"
-#include "cui/foundation/shared_ptr.h"
+#include "cui/framework/listener.h"
 #include "cui/rendering/render_box_widgets.h"
 #include "cui/rendering/render_object.h"
 #include "cui/rendering/render_view.h"
 #include "cui/widgets/basic.h"
 #include "cui/widgets/data.h"
 #include "cui/widgets/gestures.h"
-#include "cui/framework/listener.h"
 #include "cui/widgets/scroll.h"
 
 using namespace cui;
@@ -189,7 +189,7 @@ void testDayTapPlain() {
     check(sel.calls == 2 && sel.d == 11, "点击第 11 格回调 day=11");
 }
 
-// ── 2. 套在 Scrollable 里（gallery 的实际嵌套）───────────────────────────────
+// ── 2. 套在 Scrollable 里（story 的实际嵌套）───────────────────────────────
 void testDayTapInScroll() {
     std::printf("== day tap (inside Scrollable) ==\n");
     // 注意声明顺序：ScrollController 必须早于 Harness，保证函数退出时 Harness
@@ -317,7 +317,7 @@ void testTodayRing() {
     check(sel.calls == 1, "点今天同样触发回调");
 }
 
-// ── 5. 不传回调也可选中（gallery「数据」页就是裸 Calendar）───────────────────
+// ── 5. 不传回调也可选中（story「数据」页就是裸 Calendar）───────────────────
 void testSelectableWithoutCallback() {
     std::printf("== selectable without callback ==\n");
     Harness h;

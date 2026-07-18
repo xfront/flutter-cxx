@@ -27,12 +27,12 @@
 #include <memory>
 #include <optional>
 
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/color.h"
 #include "cui/foundation/geometry.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/theme.h"
 #include "cui/foundation/ticker.h"
+#include "cui/framework/framework.h"
 #include "cui/platform/event.h"
 #include "cui/rendering/render_box_widgets.h"
 #include "cui/widgets/basic.h"

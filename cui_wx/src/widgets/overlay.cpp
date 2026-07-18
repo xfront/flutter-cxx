@@ -10,8 +10,8 @@
 #include <atomic>
 #include <stdexcept>
 
+#include "../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/framework/element.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/rendering/render_theater.h"
 
 namespace cui {

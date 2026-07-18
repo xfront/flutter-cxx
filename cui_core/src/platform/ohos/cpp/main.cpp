@@ -1,12 +1,12 @@
-/// @file main.cpp — OpenHarmony 宿主入口（libcui.so 的 napi 侧）。
+/// @file main.cpp — OpenHarmony 宿主入口（libcui_core.so 的 napi 侧）。
 ///
 /// 与 android/cpp/main.cpp 同层，但启动方式相反：Android 是 NativeActivity 直接
-/// 加载 .so 并调 android_main()；这里 .so 由 ArkTS `import cui_core from 'libcui.so'`
+/// 加载 .so 并调 android_main()；这里 .so 由 ArkTS `import cui_core from 'libcui_core.so'`
 /// 加载，napi 模块「cui_core」的注册已经由引擎自己做掉（services/ohos_channel.cpp 的
 /// constructor + `napi_module.g_module`，模块名必须是 "cui_core"，与 XComponent 的
 /// `libraryname: 'cui_core'` 同一条）。所以本文件**不再注册第二个模块**，只通过那条弱
 /// 符号钩子把 surface/输入这 8 个函数追加到同一个 exports 上 —— 用弱符号而不是硬
-/// 引用：demo_gallery / demo_ide 这类没有宿主的 ohos 目标也链得动同一套引擎。
+/// 引用：story / demo_ide 这类没有宿主的 ohos 目标也链得动同一套引擎。
 ///
 /// 线程模型（这是本文件存在的主要理由）：
 ///   · JS 线程：所有 napi 函数在这里被调用。ArkTS 的平台通道回调（cui_core.install 那个

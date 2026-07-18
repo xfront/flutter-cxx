@@ -5,7 +5,7 @@
 /// `canvas_ == canvas` 判断「子树里有没有换过录制画布」。分段录制换画布时，
 /// 旧画布随 recorder 析构，新画布常常落在同一个堆地址上 ⇒ 指针比较误判成
 /// 「没换」⇒ 该做的 CTM 补偿没有执行，新画布保留着上一段残留的基准偏移。
-/// 于是边界之后的兄弟节点被整体画偏（本仓表现为 gallery 顶栏下拉菜单跑到
+/// 于是边界之后的兄弟节点被整体画偏（本仓表现为 story 顶栏下拉菜单跑到
 /// 页面中间、状态条被画到屏幕外）。
 ///
 /// 修复：用「录制代」计数器（directEpoch_）代替画布指针比较。
@@ -23,10 +23,10 @@
 #include <string>
 #include <vector>
 
+#include "../cui_core/include/cui/utils/shared_ptr.h"
+#include "cui/foundation/geometry.h"
 #include "cui/framework/build_owner.h"
 #include "cui/framework/framework.h"
-#include "cui/foundation/geometry.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/reactive/scheduler_binding.h"
 #include "cui/rendering/render_object.h"
 #include "cui/rendering/render_view.h"

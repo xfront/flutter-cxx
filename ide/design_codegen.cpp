@@ -2,11 +2,12 @@
 /// @brief CodeGenerator implementation — DesignModel → compilable C++ source.
 
 #include "design_codegen.h"
-#include "design_model.h"
 
 #include <set>
 #include <sstream>
-#include "cui/foundation/shared_ptr.h"
+
+#include "../cui_core/include/cui/utils/shared_ptr.h"
+#include "design_model.h"
 
 namespace cui {
 namespace designer {

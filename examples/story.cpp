@@ -1,17 +1,17 @@
-/// @file gallery.cpp — CUI gallery（控件体系演示）。
+/// @file story.cpp — CUI story（控件体系演示）。
 ///
-/// 整个 gallery 是**一棵**控件树：上游控件体系（widgets/*.h）直接挂在
+/// 整个 story 是**一棵**控件树：上游控件体系（widgets/*.h）直接挂在
 /// Application 的单条流水线上（Application::setRoot）。
 ///
-/// 历史：本文件曾同时维护两套 gallery —— 旧控件体系的页面
+/// 历史：本文件曾同时维护两套 story —— 旧控件体系的页面
 /// （basic/input/layout/data/navigation/dialogs 等 + Ribbon/MenuBar/Sidebar 外壳）
-/// 与当前控件体系的 gallery（gallery_shell.h 的壳与页面）。旧体系整体移除后，
+/// 与当前控件体系的 story（gallery_shell.h 的壳与页面）。旧体系整体移除后，
 /// 只保留当前体系，宿主桥也随之删除，改用 Application::setRoot 原生挂载。
 ///
 /// 离屏冒烟（配合 CUI_SHOT）：
 ///   CUI_SHOT=<path>        启动即渲染一帧并截图
 ///   CUI_EXIT_AFTER_START=1 渲染一帧后退出（验证析构路径）
-///   CUI_PAGE=<n>   直接打开指定页（由 gallery 壳读取）
+///   CUI_PAGE=<n>   直接打开指定页（由 story 壳读取）
 ///   CUI_DOWN="x,y" 只注入按下（把「按 Down 打开」的浮层留在屏上）
 ///   CUI_HOVER="x,y;x,y" 注入鼠标移动（悬停高亮 / tooltip）
 ///   CUI_SCROLL="dy"     注入滚轮滚动
@@ -51,7 +51,7 @@ void loadTranslations() {
     if (const char* l = std::getenv("CUI_LANG"))
         t.setLanguage(l);
 
-    // chrome 文案对照表（键即 gallery 源码中的原始字符串）。
+    // chrome 文案对照表（键即 story 源码中的原始字符串）。
     // 列：key, en, zh(仅当 key 本身是英文时需要), fr, ko, zh-TW。
     struct R {
         const char* k;
@@ -253,13 +253,13 @@ std::vector<SmokeAction> parseSequence(const char* s) {
 void runAction(Application& app, const SmokeAction& act) {
     if (act.kind == "down") {
         for (const auto& p : parsePoints(act.arg.c_str())) {
-            std::fprintf(stderr, "[gallery] smoke down at (%.0f, %.0f)\n", p.x, p.y);
+            std::fprintf(stderr, "[story] smoke down at (%.0f, %.0f)\n", p.x, p.y);
             injectPointer(app, EventType::MouseDown, p);
             pumpFrame(app);
         }
     } else if (act.kind == "hover") {
         for (const auto& p : parsePoints(act.arg.c_str())) {
-            std::fprintf(stderr, "[gallery] smoke hover at (%.0f, %.0f)\n", p.x, p.y);
+            std::fprintf(stderr, "[story] smoke hover at (%.0f, %.0f)\n", p.x, p.y);
             injectPointer(app, EventType::MouseMove, p);
             pumpFrame(app);
         }
@@ -267,13 +267,13 @@ void runAction(Application& app, const SmokeAction& act) {
         // 显式抬手。`click` 把 down/up 挤在同一点＝另起一次按下，会重算该 pointer
         // 的 down 命中链，所以「按下-拖动-松开」（Draggable 投放）必须用这条。
         for (const auto& p : parsePoints(act.arg.c_str())) {
-            std::fprintf(stderr, "[gallery] smoke up at (%.0f, %.0f)\n", p.x, p.y);
+            std::fprintf(stderr, "[story] smoke up at (%.0f, %.0f)\n", p.x, p.y);
             injectPointer(app, EventType::MouseUp, p);
             pumpFrame(app);
         }
     } else if (act.kind == "click") {
         for (const auto& p : parsePoints(act.arg.c_str())) {
-            std::fprintf(stderr, "[gallery] smoke click at (%.0f, %.0f)\n", p.x, p.y);
+            std::fprintf(stderr, "[story] smoke click at (%.0f, %.0f)\n", p.x, p.y);
             injectPointer(app, EventType::MouseDown, p);
             injectPointer(app, EventType::MouseUp, p);
             pumpFrame(app);
@@ -281,7 +281,7 @@ void runAction(Application& app, const SmokeAction& act) {
     } else if (act.kind == "rclick") {
         // 右键点击（X11 语义：button=3 ⇒ kSecondaryMouseButton）。
         for (const auto& p : parsePoints(act.arg.c_str())) {
-            std::fprintf(stderr, "[gallery] smoke rclick at (%.0f, %.0f)\n", p.x, p.y);
+            std::fprintf(stderr, "[story] smoke rclick at (%.0f, %.0f)\n", p.x, p.y);
             injectPointer(app, EventType::MouseDown, p, 3);
             injectPointer(app, EventType::MouseUp, p, 3);
             pumpFrame(app);
@@ -296,7 +296,7 @@ void runAction(Application& app, const SmokeAction& act) {
             if (std::sscanf(act.arg.c_str(), "%lf", &dy) != 1)
                 return;
         }
-        std::fprintf(stderr, "[gallery] smoke scroll dy=%.0f at (%.0f, %.0f)\n", dy, x, y);
+        std::fprintf(stderr, "[story] smoke scroll dy=%.0f at (%.0f, %.0f)\n", dy, x, y);
         injectPointer(app, EventType::MouseWheel, Point{x, y}, 0, dy);
         pumpFrame(app);
     } else if (act.kind == "tick") {
@@ -308,7 +308,7 @@ void runAction(Application& app, const SmokeAction& act) {
         for (int i = 0; i < n; ++i)
             pumpFrame(app);
     } else if (act.kind == "key") {
-        std::fprintf(stderr, "[gallery] smoke type: %s\n", act.arg.c_str());
+        std::fprintf(stderr, "[story] smoke type: %s\n", act.arg.c_str());
         for (char c : act.arg) {
             PlatformEvent ev;
             ev.type = EventType::KeyDown;
@@ -318,7 +318,7 @@ void runAction(Application& app, const SmokeAction& act) {
         pumpFrame(app);
     } else if (act.kind == "keycode") {
         for (int key : parseInts(act.arg.c_str())) {
-            std::fprintf(stderr, "[gallery] smoke keycode %d\n", key);
+            std::fprintf(stderr, "[story] smoke keycode %d\n", key);
             PlatformEvent ev;
             ev.type = EventType::KeyDown;
             ev.key = key;

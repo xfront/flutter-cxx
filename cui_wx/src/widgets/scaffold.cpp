@@ -24,9 +24,9 @@
 #include <stdexcept>
 #include <utility>
 
+#include "../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/widgets/basic.h"
 #include "cui/widgets/material.h"
-#include "cui/foundation/shared_ptr.h"
 
 namespace cui {
 

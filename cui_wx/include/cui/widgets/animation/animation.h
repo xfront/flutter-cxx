@@ -56,12 +56,12 @@
 #include <utility>
 #include <vector>
 
-#include "cui/foundation/geometry.h"
+#include "../../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/change_notifier.h"
+#include "cui/foundation/geometry.h"
 #include "cui/foundation/ticker.h"
 #include "cui/reactive/observable.h"
 #include "cui/reactive/signal.h"
-#include "cui/foundation/shared_ptr.h"
 
 namespace cui {
 

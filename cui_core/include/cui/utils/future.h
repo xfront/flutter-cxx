@@ -35,7 +35,7 @@
 
 #include "cui/foundation/application.h"
 #include "cui/utils/task.h"
-#include "cui/foundation/shared_ptr.h"
+#include "shared_ptr.h"
 
 namespace cui {
 

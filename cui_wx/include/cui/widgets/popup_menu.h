@@ -27,19 +27,19 @@
 #include <string>
 #include <vector>
 
-#include "cui/framework/element.h"
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/color.h"
 #include "cui/foundation/events.h"
 #include "cui/foundation/geometry.h"
 #include "cui/foundation/painter.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/foundation/theme.h"
+#include "cui/framework/element.h"
+#include "cui/framework/framework.h"
+#include "cui/framework/listener.h"
 #include "cui/rendering/render_box.h"
 #include "cui/widgets/basic.h"
 #include "cui/widgets/container.h"
 #include "cui/widgets/gestures.h"
-#include "cui/framework/listener.h"
 #include "cui/widgets/overlay.h"
 #include "cui/widgets/text.h"
 

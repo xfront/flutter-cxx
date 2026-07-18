@@ -14,9 +14,9 @@
 #include <memory>
 #include <vector>
 
-#include "element.h"
-#include "cui/foundation/shared_ptr.h"
+#include "../utils/shared_ptr.h"
 #include "cui/rendering/render_object.h"
+#include "element.h"
 
 namespace cui {
 

@@ -10,9 +10,9 @@
 /// `SafeArea` 是 StatelessWidget：按 `MediaQuery` 提供的安全区 padding
 /// 给 child 包一层 `Padding`，避免内容被刘海 / 系统栏遮挡。
 
-#include "cui/framework/framework.h"
+#include "../../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/foundation/geometry.h"
-#include "cui/foundation/shared_ptr.h"
+#include "cui/framework/framework.h"
 
 namespace cui {
 

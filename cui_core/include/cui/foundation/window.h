@@ -23,8 +23,8 @@
 #include <string>
 #include <vector>
 
+#include "../utils/shared_ptr.h"
 #include "cui/foundation/events.h"
-#include "cui/foundation/shared_ptr.h"
 #include "geometry.h"
 
 namespace cui {

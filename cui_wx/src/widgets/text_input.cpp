@@ -5,8 +5,8 @@
 #include <algorithm>
 #include <cctype>
 
+#include "../../../cui_core/include/cui/utils/shared_ptr.h"
 #include "cui/framework/build_owner.h"
-#include "cui/foundation/shared_ptr.h"
 #include "cui/rendering/render_editable.h"
 #include "cui/widgets/basic.h"      // Column, EdgeInsets
 #include "cui/widgets/container.h"  // Container, BoxDecoration

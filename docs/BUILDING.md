@@ -29,10 +29,10 @@ ctest --preset <preset>           # 仅 x64-windows / x64-linux / macOS 注册�
 ### 1.1 产物目录 `dist/`
 
 编译完成后，所有产物都直接落在源码根的 `dist/`，不再散落在
-`build-*/flutter/`、`build-*/packages/*/`、`build-*/examples/`：
+`build-*/cui_core/`、`build-*/packages/*/`、`build-*/examples/`：
 
 * 本仓的库（`libcui-core.*` / `libcui-wx.*` / `libcui_charts.*` 等）、
-  全部可执行文件（`demo_gallery`、`demo_ide`、`vs2022`、各测试）；
+  全部可执行文件（`story`、`demo_ide`、`vs2022`、各测试）；
 * SHARED 构建时 vcpkg 的运行时动态库也一并收集：`libskia.so*`、ffmpeg 的
   `libav*.so*` / `libsw*.so*`，以及它们依赖的 `libwebp*.so` / `libfreetype.so` 等
   （版本软链原样重建）。静态 triplet 下没有 `.so`，这一步自动空跑。
@@ -40,7 +40,7 @@ ctest --preset <preset>           # 仅 x64-windows / x64-linux / macOS 注册�
 因此 `dist/` 可整体拷走运行，不需要 `LD_LIBRARY_PATH`：
 
 ```bash
-./dist/demo_gallery
+./dist/story
 ```
 
 默认所有构建配置共用一个 `dist/`；若同时保留 debug/release 或
@@ -57,14 +57,14 @@ cmake -B build-x64-linux-debug -S . -DCUI_DIST_DIR=$PWD/build-x64-linux-debug/di
 
 | 平台 | configure 预设 | 构建产物（均在源码根 `dist/`） | 测试 | 备注 |
 |------|----------------|----------|------|------|
-| Windows x64 | `x64-windows-{debug,release}` | `demo_gallery.exe` / `demo_ide.exe` / `vs2022.exe` / `tests/*.exe` | ✅ | MSVC；`build.cmd` 会自动加载下面的 `vcvars64.bat` 环境 |
+| Windows x64 | `x64-windows-{debug,release}` | `story.exe` / `demo_ide.exe` / `vs2022.exe` / `tests/*.exe` | ✅ | MSVC；`build.cmd` 会自动加载下面的 `vcvars64.bat` 环境 |
 | Linux x64 | `x64-linux-{debug,release}` | 同上（无后缀） | ✅ | XCB + fontconfig + 可选 Xlib(XIM) |
 | Linux + Sanitizer | `x64-linux-asan` / `x64-linux-ubsan` / `x64-linux-asan-ubsan` | 同上 | ✅ | `CUI_SANITIZE=...`，LSAN 抑制表自动挂上 |
 | macOS arm64 / x64 | `macos-arm64-{debug,release}` / `macos-x64-{debug,release}` | 同上 | ✅ | AppKit 后端（Objective-C++），链接 `-framework Cocoa` |
 | iOS arm64 | `ios-arm64-{debug,release}` | `libcui-core.a` / `libcui-wx.a` | — | 只编库；测试/示例默认关闭（交叉编译产物不可在宿主机运行） |
 | Android arm64 | `android-arm64-{debug,release}` | `libcui-core.a` / `libcui-wx.a` | — | NDK 工具链（`ANDROID_NDK_HOME`），triplet `arm64-android` |
 | OHOS arm64 | 无预设（`build.sh ohos` / 手工） | `libcui-core.a` / `libcui-wx.a` | — | NDK 26 + triplet `arm64-ohos`（release-only）；skia 的 ohos 分支由 overlay port 提供，见下 |
-| Web / WASM | `wasm32-emscripten-{debug,release}` | `demo_gallery.html/.js/.wasm` | — | 需要 emsdk（`EMSDK`，或 `--install-emsdk`）；浏览器内无进程模型，不注册测试 |
+| Web / WASM | `wasm32-emscripten-{debug,release}` | `story.html/.js/.wasm` | — | 需要 emsdk（`EMSDK`，或 `--install-emsdk`）；浏览器内无进程模型，不注册测试 |
 
 ### 一键脚本（build.cmd / build.sh）
 
@@ -208,7 +208,7 @@ Windows 上优先用 `build.cmd`；习惯 Git Bash 时 `bash build.sh` 也能跑
 | 选项 | 默认 | 作用 |
 |------|------|------|
 | `USE_SKIA` | `ON` | 使用 Skia 渲染后端（关闭后只剩基础库，需自行提供 Painter） |
-| `CUI_BUILD_EXAMPLES` | `ON` | 构建 `examples/`（`demo_gallery`、`demo_ide`） |
+| `CUI_BUILD_EXAMPLES` | `ON` | 构建 `examples/`（`story`、`demo_ide`） |
 | `CUI_BUILD_IDE` | `ON` | 构建 `ide/`（`vs2022` 可视化设计器） |
 | `CUI_BUILD_TESTS` | `ON` | 构建并注册单元测试（Web/iOS/Android 永远不注册） |
 | `CUI_ENABLE_INSTALL` | `ON` | 生成 install / export / CMake 包 / pkg-config / CPack 规则 |

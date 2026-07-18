@@ -2,14 +2,15 @@
 /// @brief CodeParser implementation — line-scanning C++ → DesignModel.
 
 #include "design_codeparser.h"
-#include "design_model.h"
 
 #include <map>
 #include <regex>
 #include <sstream>
 #include <string>
 #include <vector>
-#include "cui/foundation/shared_ptr.h"
+
+#include "../cui_core/include/cui/utils/shared_ptr.h"
+#include "design_model.h"
 
 namespace cui {
 namespace designer {
